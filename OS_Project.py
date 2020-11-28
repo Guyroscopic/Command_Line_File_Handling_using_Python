@@ -4,7 +4,7 @@ import os
 ROOT_PATH  = "C:/OS_Project_root"
 MENU_ITEMS = ["Create", "Delete", "MkDir", "ChDir", "Move", "Exit"]
 
-os.system("cls")
+#os.system("cls")
 
 #if the root os path does not exist
 if not os.path.isdir(ROOT_PATH):
@@ -35,21 +35,17 @@ while True:
         if command_func not in MENU_ITEMS:
                 print("\nERROR! No such command please try again")
         else:
-                if command_func == "Create":
-                        file_path = command_full.split()[1]
-                        create(file_path)
+                if command_func == "Create":                        
+                        create(command_full)
 				
-                elif command_func == "MkDir":
-                        dir_path = command_full.split()[1]
-                        mkDir(dir_path)
+                elif command_func == "MkDir":                        
+                        mkDir(command_full)
 
-                elif command_func == "Delete":
-                        file_path = command_full.split()[1]
-                        delete(file_path)
+                elif command_func == "Delete":                        
+                        delete(command_full)
 
-                elif command_func == "ChDir":
-                        dir_path = command_full.split()[1]
-                        chDir(dir_path)
+                elif command_func == "ChDir":                       
+                        chDir(command_full)
 
                 elif command_func == "Exit":
                         print("\nQuitting")
