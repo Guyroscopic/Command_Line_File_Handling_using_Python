@@ -1,18 +1,18 @@
 from OS_Project_utils import *
 import os
 
-ROOT_PATH  = "C:/OS_Project_root"
-MENU_ITEMS = ["Create", "Delete", "MkDir", "ChDir", "Move", "Exit"]
+MENU_ITEMS = ["Create", "Delete", "MkDir", "Move", "ChDir", "Exit"]
 
 #os.system("cls")
 
+
 #if the root os path does not exist
-if not os.path.isdir(ROOT_PATH):
-        os.chdir("C:/")
-        os.mkdir("C:/OS_Project_root")
-        print("Directory did not exist So created one")
+#if not os.path.isdir(ROOT_PATH):
+#        os.chdir("C:/")
+#        os.mkdir("C:/OS_Project_root")
+#        print("Directory did not exist So created one")
         
-os.chdir(ROOT_PATH)
+#os.chdir(ROOT_PATH)
 
 
 for i, item in enumerate(MENU_ITEMS):
@@ -45,7 +45,7 @@ while True:
                         delete(command_full)
 
                 elif command_func == "ChDir":                       
-                        chDir(command_full)
+                        current_path = chDir(command_full)
 
                 elif command_func == "Exit":
                         print("\nQuitting")

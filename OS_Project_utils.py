@@ -1,11 +1,14 @@
 import os
 import json
 
-ROOT_PATH  = "C:/OS_Project_root"
-MENU_ITEMS = ["Create", "Delete", "MkDir", "Move", "Exit"]
+ROOT_PATH  = ""
+
+current_path = ROOT_PATH
 
 with open("structure.json") as f:
   structure = json.load(f)
+
+print(structure)
 
 root = structure["root"]
 
@@ -41,6 +44,8 @@ def mkDir(command_full):
        
     try:
         dir_path = command_full.split()[1]
+        dir_path = current_path + dir_path
+        print("PATH in mkdir:", dir_path)
         dir_to_create = dir_path.split("/")[-1]
         dir_to_update = dir_path.split("/")[:-1]
         hierarchy = checkHierarchy(dir_to_update)
@@ -48,34 +53,28 @@ def mkDir(command_full):
         if type(hierarchy) == str:
             print(f"\nERROR: Directory '{hierarchy}' could not be found")
         else:
-            ##MAKE THE DIR IN STRUCTURE LOGIC
-            print("\ndir found")
+            #MAKE THE DIR IN STRUCTURE LOGIC
             try:
                 #Checking if the Directorry already exists
                 hierarchy[dir_to_create]
                 print(f"ERROR: Directory '{dir_path}' already exists")
             except KeyError as ke:
+
                 #Adding the directory to Parent Directory
+                print("Creating the Dir")
                 hierarchy[dir_to_create] = {"type": "dir"}
 
-                #Updating the structure file
-                str_to_exec = "root"
-                for i in range(len(dir_to_update)):
-                    str_to_exec += f"[dir_to_update[{i}]]"
-                str_to_exec += " = hierarchy"
-
-                #print("\nTO EXEC:", str_to_exec)
-                #for i in range(len(dir_to_update)):
-                #    print(dir_to_update[i])
-
-                print("\nOLDD", structure, "\n")
-                exec(str_to_exec)
-                structure["root"] = root
-
-                print(structure)
-                with open("structure.json", "w") as f:
+                #print(structure)
+                with open("structure.json", "w") as f: 
+                    print(f)  
+                    print(structure)                 
+                    json_str = json.dumps(structure)
+                    f.write(json_str)
+                    f.flush()
                     print("Inside Write")
-                    json.dump(structure, f)
+
+                print("Directory Created")
+                    
             
         #os.mkdir(dir_path)
         #print("'" + ROOT_PATH + "/" + dir_path + "' Directory created")
@@ -95,22 +94,33 @@ def  Move():
 
 def chDir(command_full):
 
+    global current_path
+        
+    try:
         dir_path = command_full.split()[1]
-        try:
-                os.chdir(dir_path)
-                print("'In directory " + dir_path + "'")
+        hierarchy = checkHierarchy(dir_path.split("/"))
 
-        except IndexError as ie:
-                print("\nERROR: No Directory name or path specified, usage: 'ChDir <directoryPath>'")
+        if type(hierarchy) == str:
+            print(f"\nERROR: Directory '{hierarchy}' could not be found")
+        else:
+            print(f"Setting current path to '{dir_path}'")
+            current_path = dir_path + "/"
+            #print(current_path)
 
-        except FileNotFoundError as ffe:
-                print(f"\nERROR: Directory '{dir_path}' not found")
+            #os.chdir(dir_path)
+            #print("'In directory " + dir_path + "'")
+
+    except IndexError as ie:
+        print("\nERROR: No Directory name or path specified, usage: 'ChDir <directoryPath>'")
+
+        #except FileNotFoundError as ffe:
+        #       print(f"\nERROR: Directory '{dir_path}' not found")
 
 
 
 def checkHierarchy(file_path):
 
-    print("\nFILE PATH IN checkHierarchy():", file_path, "\n")
+    #print("\nFILE PATH IN checkHierarchy():", file_path, "\n")
 
     dirs_without_keys = root
     dir_str = ""
@@ -121,14 +131,14 @@ def checkHierarchy(file_path):
             #print(file_path[idx], "found inside", dirs)
             dir_str += "/" + file_path[idx]
             #print("dir_str:", dir_str)
-            dirs_without_keys = updateDirList(dir_str)
+            dirs_without_keys = getDirDictFromPath(dir_str)
             #print("dirs updated:", dirs)
         else:
             return dir_str + "/" + file_path[idx]
 
     return dirs_without_keys
 
-def updateDirList(dir_str):
+def getDirDictFromPath(dir_str):
 
     found_dir_hierarchy = dir_str.split("/")[1:]
     #print("found_dir_hierarchy:", found_dir_hierarchy)
@@ -139,6 +149,8 @@ def updateDirList(dir_str):
         temp = temp[i]
 
     return temp
+
+
             
         
 
