@@ -40,28 +40,43 @@ def create(command_full):
 
                     print(f"File '{file_path}.txt' created")
 
-
-            #open(file_path, 'x')
-            #print("'" + ROOT_PATH + "/" + file_path + "' File created")
-
         except IndexError as ie:
                 print("\nERROR: No File name or path specified, usage: 'Create <filePath>'")
 
-        #except FileExistsError as fee:
-        #       print(f"\nERROR: File '{file_path}' already exists, delete the previous one to create new")
 
 def delete(command_full):
 
-        file_path = command_full.split()[1]
         try:
-                os.remove(file_path)
-                print("'" + ROOT_PATH + "/" + file_path + "' File deleted")
+            file_path      = command_full.split()[1]
+            file_path      = current_path + file_path
+            file_to_delete = file_path.split("/")[-1]
+            parent_dir     = file_path.split("/")[:-1]
+            hierarchy      = checkHierarchy(parent_dir)
+
+            if type(hierarchy) == str:
+                print(f"\nERROR: Directory '{hierarchy}' could not be found")
+            else:
+                try:
+                    #Checking if the File exists
+                    hierarchy[file_to_delete]
+                    
+                    if hierarchy[file_to_delete]["type"] != "file":
+                        print(f"'{file_path}' is not a file")
+
+                    else:
+                        hierarchy.pop(file_to_delete)
+
+                        with open("structure.json", "w") as f:
+                            json.dump(structure, f)
+
+                        print(f"File '{file_path}.txt' DELETED")
+
+                except KeyError as ke:
+                    #If the file does not Exist
+                    print(f"File {file_path}.txt does not exist")
 
         except IndexError as ie:
                 print("\nERROR: No Directory name or path specified, usage: 'Delete <filePath>'")
-
-        except FileNotFoundError as ffe:
-                print(f"\nERROR: File '{file_path}' does not exist")
 
 
 def mkDir(command_full):
@@ -98,25 +113,22 @@ def mkDir(command_full):
                     #print("Inside Write")
 
                 print(f"Directory '{dir_path}' Created")
-                    
-            
-        #os.mkdir(dir_path)
-        #print("'" + ROOT_PATH + "/" + dir_path + "' Directory created")
 
     except IndexError as ie:
         print("\nERROR: No Directory name or path specified, usage: 'MkDir <directoryPath>'")
+       
 
-    #except FileExistsError as fee:
-    #    print(f"\nERROR: Directory '{dir_path}' already exists, delete the previous one to create new")
+def  Move(command_full):    
+    pass
 
 
-        
+def showMap():
 
-def  Move(command_full):
-    
-    try:
-        source_file = command_full.split()[1]
-        target_file = 
+    global current_path
+
+    current_dict = getDirDictFromPath(current_path)
+    prettyPrint(current_dict, 1)
+
 
 
 def chDir(command_full):
@@ -132,16 +144,9 @@ def chDir(command_full):
         else:
             print(f"Setting current path to '{dir_path}'")
             current_path = dir_path + "/"
-            #print(current_path)
-
-            #os.chdir(dir_path)
-            #print("'In directory " + dir_path + "'")
 
     except IndexError as ie:
         print("\nERROR: No Directory name or path specified, usage: 'ChDir <directoryPath>'")
-
-        #except FileNotFoundError as ffe:
-        #       print(f"\nERROR: Directory '{dir_path}' not found")
 
 
 
@@ -162,10 +167,13 @@ def checkHierarchy(path):
         #print("for loop iteration", idx)
         if path[idx] in dir_dict.keys():
             #print(file_path[idx], "found inside", dirs)
-            dir_str += "/" + path[idx]
+            if dir_str == "":
+                dir_str +=  path[idx]
+            else:
+                dir_str += "/" + path[idx]
             #print("dir_str:", dir_str)
             dir_dict = getDirDictFromPath(dir_str)
-            #print("dirs updated:", dirs)
+            #print("dirs updated:", dir_dict.keys())
         else:
             #Returning invalid path string
             return dir_str + "/" + path[idx]
@@ -180,15 +188,33 @@ def getDirDictFromPath(dir_path):
     ARGUMENTS: dir_path: str 
     """
 
-    found_dir_hierarchy = dir_path.split("/")[1:]
-    #print("found_dir_hierarchy:", found_dir_hierarchy)
-
     temp = root
 
+    if not dir_path:
+        return temp
+    
+    found_dir_hierarchy = dir_path.split("/")
     for i in found_dir_hierarchy:
         temp = temp[i]
 
     return temp
+
+
+def prettyPrint(d, indent=0):
+
+    """
+    A function used to pretty print the file structure
+    """
+
+    for key, value in d.items():
+
+        if key != "type" and key != "extension" and key != "data":
+            
+            if isinstance(value, dict):
+                print('  ' * indent + str(key) + ": " + str(value["type"]))
+                prettyPrint(value, indent+1)
+            else:
+                print('  ' * (indent+1) + str(value))
 
 
             

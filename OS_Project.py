@@ -1,7 +1,7 @@
 from OS_Project_utils import *
 import os
 
-MENU_ITEMS = ["Create", "Delete", "MkDir", "Move", "ChDir", "Exit"]
+MENU_ITEMS = ["Create", "Delete", "MkDir", "Move", "ChDir", "ShowMap", "Exit"]
 
 #os.system("cls")
 
@@ -46,6 +46,9 @@ while True:
 
                 elif command_func == "ChDir":                       
                         current_path = chDir(command_full)
+
+                elif command_func == "ShowMap":
+                        showMap()
 
                 elif command_func == "Exit":
                         print("\nQuitting")
