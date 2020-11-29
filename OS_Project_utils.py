@@ -2,29 +2,53 @@ import os
 import json
 
 ROOT_PATH  = ""
-
 current_path = ROOT_PATH
+
+print("Current Path: ", current_path)
 
 with open("structure.json") as f:
   structure = json.load(f)
-
-print(structure)
 
 root = structure["root"]
 
 
 def create(command_full):
-
-        file_path = command_full.split()[1]
+        
         try:
-                open(file_path, 'x')
-                print("'" + ROOT_PATH + "/" + file_path + "' File created")
+            file_path      = command_full.split()[1]
+            file_path      = current_path + file_path
+            file_to_create = file_path.split("/")[-1]
+            parent_dir     = file_path.split("/")[:-1]
+            hierarchy      = checkHierarchy(parent_dir)
+
+            if type(hierarchy) == str:
+                print(f"\nERROR: Directory '{hierarchy}' could not be found")
+            else:
+                try:
+                    #Checking if the File already exists
+                    hierarchy[file_to_create]
+                    print(f"ERROR: File '{file_path}' already exists")
+
+                except KeyError as ke:
+                    hierarchy[file_to_create] = {
+                                                    "type"     : "file",
+                                                    "extension": ".txt"
+                                                }
+
+                    with open("structure.json", "w") as f:
+                        json.dump(structure, f)
+
+                    print(f"File '{file_path}.txt' created")
+
+
+            #open(file_path, 'x')
+            #print("'" + ROOT_PATH + "/" + file_path + "' File created")
 
         except IndexError as ie:
-                print("\nERROR: No Directory name or path specified, usage: 'Create <filePath>'")
+                print("\nERROR: No File name or path specified, usage: 'Create <filePath>'")
 
-        except FileExistsError as fee:
-                print(f"\nERROR: File '{file_path}' already exists, delete the previous one to create new")
+        #except FileExistsError as fee:
+        #       print(f"\nERROR: File '{file_path}' already exists, delete the previous one to create new")
 
 def delete(command_full):
 
@@ -45,10 +69,10 @@ def mkDir(command_full):
     try:
         dir_path = command_full.split()[1]
         dir_path = current_path + dir_path
-        print("PATH in mkdir:", dir_path)
+        #print("PATH in mkdir:", dir_path)
         dir_to_create = dir_path.split("/")[-1]
-        dir_to_update = dir_path.split("/")[:-1]
-        hierarchy = checkHierarchy(dir_to_update)
+        parent_dir = dir_path.split("/")[:-1]
+        hierarchy = checkHierarchy(parent_dir)
 
         if type(hierarchy) == str:
             print(f"\nERROR: Directory '{hierarchy}' could not be found")
@@ -66,14 +90,14 @@ def mkDir(command_full):
 
                 #print(structure)
                 with open("structure.json", "w") as f: 
-                    print(f)  
-                    print(structure)                 
-                    json_str = json.dumps(structure)
-                    f.write(json_str)
-                    f.flush()
-                    print("Inside Write")
+                    #print(f)  
+                    #print(structure)                 
+                    json.dump(structure, f)
+                    #f.write(json_str)
+                    #f.flush()
+                    #print("Inside Write")
 
-                print("Directory Created")
+                print(f"Directory '{dir_path}' Created")
                     
             
         #os.mkdir(dir_path)
@@ -88,8 +112,11 @@ def mkDir(command_full):
 
         
 
-def  Move():
-    pass
+def  Move(command_full):
+    
+    try:
+        source_file = command_full.split()[1]
+        target_file = 
 
 
 def chDir(command_full):
@@ -118,29 +145,42 @@ def chDir(command_full):
 
 
 
-def checkHierarchy(file_path):
+def checkHierarchy(path):
 
     #print("\nFILE PATH IN checkHierarchy():", file_path, "\n")
+    """
+    A Function tat checks the validity of a path in the file structure
+    If the argument 'path' is valid, the function returns a dictionary Object of the file/dir,
+    else returns a String that specifies the invalid path
+    ARGUMENTS: path: list 
+    """
 
-    dirs_without_keys = root
+    dir_dict = root
     dir_str = ""
 
-    for idx, dir_name in enumerate(file_path):
+    for idx, dir_name in enumerate(path):
         #print("for loop iteration", idx)
-        if file_path[idx] in dirs_without_keys.keys():
+        if path[idx] in dir_dict.keys():
             #print(file_path[idx], "found inside", dirs)
-            dir_str += "/" + file_path[idx]
+            dir_str += "/" + path[idx]
             #print("dir_str:", dir_str)
-            dirs_without_keys = getDirDictFromPath(dir_str)
+            dir_dict = getDirDictFromPath(dir_str)
             #print("dirs updated:", dirs)
         else:
-            return dir_str + "/" + file_path[idx]
+            #Returning invalid path string
+            return dir_str + "/" + path[idx]
 
-    return dirs_without_keys
+    #Returning Directory dictionary object
+    return dir_dict
 
-def getDirDictFromPath(dir_str):
+def getDirDictFromPath(dir_path):
 
-    found_dir_hierarchy = dir_str.split("/")[1:]
+    """   
+    A fucntion that returns dictionary object of directory
+    ARGUMENTS: dir_path: str 
+    """
+
+    found_dir_hierarchy = dir_path.split("/")[1:]
     #print("found_dir_hierarchy:", found_dir_hierarchy)
 
     temp = root
