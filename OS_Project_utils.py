@@ -1,4 +1,3 @@
-import os
 import json
 
 ROOT_PATH  = ""
@@ -16,11 +15,13 @@ def create(command_full):
         
         try:
             file_path      = command_full.split()[1]
-            file_path      = current_path + file_path
+            file_path      = getAbsPathfromRelPath(file_path)
+            print("\nFILE PATH IN CREATE:", file_path)
             file_to_create = file_path.split("/")[-1]
             parent_dir     = file_path.split("/")[:-1]
             hierarchy      = checkHierarchy(parent_dir)
 
+            print("PATH: ", file_path)
             if type(hierarchy) == str:
                 print(f"\nERROR: Directory '{hierarchy}' could not be found")
             else:
@@ -48,11 +49,12 @@ def delete(command_full):
 
         try:
             file_path      = command_full.split()[1]
-            file_path      = current_path + file_path
+            file_path      = getAbsPathfromRelPath(file_path)
             file_to_delete = file_path.split("/")[-1]
             parent_dir     = file_path.split("/")[:-1]
             hierarchy      = checkHierarchy(parent_dir)
 
+            print("PATH: ", file_path)
             if type(hierarchy) == str:
                 print(f"\nERROR: Directory '{hierarchy}' could not be found")
             else:
@@ -83,12 +85,14 @@ def mkDir(command_full):
        
     try:
         dir_path = command_full.split()[1]
-        dir_path = current_path + dir_path
-        #print("PATH in mkdir:", dir_path)
+        dir_path = getAbsPathfromRelPath(dir_path)
+        print("PATH in mkdir:", dir_path)
         dir_to_create = dir_path.split("/")[-1]
         parent_dir = dir_path.split("/")[:-1]
+        print("dir_to_create:", dir_to_create, "\nparent_dir:", parent_dir)
         hierarchy = checkHierarchy(parent_dir)
 
+        print("PATH: ", dir_path)
         if type(hierarchy) == str:
             print(f"\nERROR: Directory '{hierarchy}' could not be found")
         else:
@@ -125,7 +129,8 @@ def  Move(command_full):
 def showMap():
 
     global current_path
-
+    print("Current Paht: ", current_path)
+    print("PATH: ",current_path)
     current_dict = getDirDictFromPath(current_path)
     prettyPrint(current_dict, 1)
 
@@ -137,13 +142,16 @@ def chDir(command_full):
         
     try:
         dir_path = command_full.split()[1]
+        dir_path = getAbsPathfromRelPath(dir_path)
         hierarchy = checkHierarchy(dir_path.split("/"))
 
+        
         if type(hierarchy) == str:
             print(f"\nERROR: Directory '{hierarchy}' could not be found")
+            
         else:
             print(f"Setting current path to '{dir_path}'")
-            current_path = dir_path + "/"
+            current_path = dir_path 
 
     except IndexError as ie:
         print("\nERROR: No Directory name or path specified, usage: 'ChDir <directoryPath>'")
@@ -159,10 +167,11 @@ def checkHierarchy(path):
     else returns a String that specifies the invalid path
     ARGUMENTS: path: list 
     """
+    print("PATH in checkHierarchy:", path)
 
-    dir_dict = root
-    dir_str = ""
-
+    dir_str  = ""
+    dir_dict = getDirDictFromPath(dir_str)
+    
     for idx, dir_name in enumerate(path):
         #print("for loop iteration", idx)
         if path[idx] in dir_dict.keys():
@@ -171,7 +180,8 @@ def checkHierarchy(path):
                 dir_str +=  path[idx]
             else:
                 dir_str += "/" + path[idx]
-            #print("dir_str:", dir_str)
+            #print("dir_str;", dir_str)
+            #print("dirs old:", dir_dict.keys())
             dir_dict = getDirDictFromPath(dir_str)
             #print("dirs updated:", dir_dict.keys())
         else:
@@ -215,6 +225,17 @@ def prettyPrint(d, indent=0):
                 prettyPrint(value, indent+1)
             else:
                 print('  ' * (indent+1) + str(value))
+
+def getAbsPathfromRelPath(rel_path):
+
+    global current_path
+    print(current_path)
+
+    if current_path:
+        return current_path + "/" + rel_path
+        
+    return rel_path
+
 
 
             
