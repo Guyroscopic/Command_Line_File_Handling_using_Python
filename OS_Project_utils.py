@@ -1,6 +1,8 @@
 import os
 import json
+from FileClass import FileClass
 
+f = ""
 ROOT_PATH  = ""
 current_path = ROOT_PATH
 
@@ -149,6 +151,76 @@ def chDir(command_full):
         print("\nERROR: No Directory name or path specified, usage: 'ChDir <directoryPath>'")
 
 
+
+def open(command_full):
+    
+    global f
+
+    try:
+        file_path      = command_full.split()[1]
+        #mode = command_full.split()[2]
+        file_path      = current_path + file_path
+        file_to_open = file_path.split("/")[-1]
+        parent_dir     = file_path.split("/")[:-1]
+        hierarchy      = checkHierarchy(parent_dir)
+
+
+        if type(hierarchy) == str:
+            print("File does not exist")
+            
+        try:
+            #Checking if the File exists
+            hierarchy[file_to_open]
+                    
+            if hierarchy[file_to_open]["type"] != "file":
+                print(f"'{file_path}' is not a file")
+
+            else:
+                f = FileClass(file_to_open, hierarchy[file_to_open])
+                print("File Opened")
+
+        except KeyError as ke:
+            #If the file does not Exist
+            print(f"File {file_path}.txt does not exist")
+
+    except IndexError as ie:
+        print("\nERROR: No Directory name or path specified, usage: 'Open <fileName> <mode[r, w, a]>'")
+
+
+def close(command_full):
+    global f
+    try:
+        file_path      = command_full.split()[1]
+        file_path      = current_path + file_path
+        file_to_close = file_path.split("/")[-1]
+        parent_dir     = file_path.split("/")[:-1]
+        hierarchy      = checkHierarchy(parent_dir)
+
+        if type(hierarchy) == str:
+            print("File does not exist")
+            
+        try:
+            #Checking if the File exists
+            hierarchy[file_to_close]
+                    
+            if hierarchy[file_to_close]["type"] != "file":
+                print(f"'{file_path}' is not a file")
+
+            else:
+                if file_to_close == f.name:
+                    f = None
+                    print("File Closed\n")
+
+                else:
+                    print("File is not opened")
+
+        except KeyError as ke:
+            #If the file does not Exist
+            print(f"File {file_path}.txt does not exist")
+    
+
+    except IndexError as ie:
+        print("\nERROR: No Directory name or path specified, usage: 'Open <fileName> <mode[r, w, a]>'")
 
 def checkHierarchy(path):
 
