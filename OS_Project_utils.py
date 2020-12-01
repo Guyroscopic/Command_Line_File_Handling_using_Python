@@ -12,7 +12,7 @@ with open("structure.json") as f:
   structure = json.load(f)
 
 root = structure["root"]
-
+data = structure["data"]
 
 def create(command_full):
         
@@ -152,13 +152,13 @@ def chDir(command_full):
 
 
 
-def open(command_full):
+def Open(command_full):
     
     global f
 
     try:
         file_path      = command_full.split()[1]
-        #mode = command_full.split()[2]
+        mode = command_full.split()[2]
         file_path      = current_path + file_path
         file_to_open = file_path.split("/")[-1]
         parent_dir     = file_path.split("/")[:-1]
@@ -179,13 +179,66 @@ def open(command_full):
                 f = FileClass(file_to_open, hierarchy[file_to_open])
                 print("File Opened")
 
+                if mode == 'r':
+                    print("reading file")
+
+                    f.readFile(hierarchy[file_to_open], data)
+
+                elif mode == 'rf':
+                    f.readFileFrom(hierarchy[file_to_open], data)
+
+                elif mode == 'a':
+                    text_appended = f.appendFile(hierarchy[file_to_open], data)
+
+                    file_ob = hierarchy[file_to_open]
+                    page = file_ob["page"]
+
+                    for p in page:
+                        data[str(p)] = text_appended
+                    with open("structure.json", "w") as f:
+                        json.dump(structure, f)
+
+                elif mode == 't':
+                    truncate_text = f.truncate(hierarchy[file_to_open], data)
+
+                    file_ob = hierarchy[file_to_open]
+                    page = file_ob["page"]
+                    for p in page:
+                        data[str(p)] = truncate_text
+                    with open("structure.json", "w") as f:
+                            json.dump(structure, f)
+                            
+
+                elif mode == 'mov':
+                    move_text = f.move(hierarchy[file_to_open], data)
+                    file_ob = hierarchy[file_to_open]
+                    page = file_ob["page"]
+                    for p in page:
+                        data[str(p)] = move_text
+                    with open("structure.json", "w") as f:
+                        json.dump(structure, f)
+
+                elif mode == 'wa':
+                    write_text = f.writeAtFile(hierarchy[file_to_open], data)
+                    file_ob = hierarchy[file_to_open]
+                    page = file_ob["page"]
+                    for p in page:
+                        data[str(p)] = write_text
+                    with open("structure.json", "w") as f:
+                        json.dump(structure, f)
+
+                else:
+                    print("Invalid Mode")
+
         except KeyError as ke:
             #If the file does not Exist
             print(f"File {file_path}.txt does not exist")
 
     except IndexError as ie:
-        print("\nERROR: No Directory name or path specified, usage: 'Open <fileName> <mode[r, w, a]>'")
+        print("\nERROR: No Directory name or path specified, usage: 'Open <fileName> <mode[r, rf, w, wa, a, t]>'")
 
+
+''' This functioon closes the file '''
 
 def close(command_full):
     global f
@@ -221,6 +274,7 @@ def close(command_full):
 
     except IndexError as ie:
         print("\nERROR: No Directory name or path specified, usage: 'Open <fileName> <mode[r, w, a]>'")
+
 
 def checkHierarchy(path):
 

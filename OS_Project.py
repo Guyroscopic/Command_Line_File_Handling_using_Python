@@ -48,7 +48,7 @@ while True:
                         current_path = chDir(command_full)
 
                 elif command_func == "Open":
-                        open(command_full)
+                        Open(command_full)
 
                 elif command_func == "Close":
                         close(command_full)
