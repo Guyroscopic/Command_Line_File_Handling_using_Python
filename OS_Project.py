@@ -1,5 +1,4 @@
 from OS_Project_utils import *
-import os
 
 MENU_ITEMS = ["Create", "Delete", "MkDir", "Move", "ChDir", "Open", "Close", "ShowMap", "Exit"]
 
