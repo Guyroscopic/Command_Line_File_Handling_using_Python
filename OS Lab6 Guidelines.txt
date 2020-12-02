@@ -1,0 +1,28 @@
+########################## OS Lab 06 Guidelines ################################
+
+GROUP MEMBERS: (BESE-9B)
+	-Abdul Rafey 242863
+	-Laraib Arjamand 265399
+
+Explanation:
+- We are using a json file for keeping a record of our file structure and our data.
+- We have a total of 10 PAGES in out file system right now and each page is of 1KB.
+- Our file structure has key-value paris, the file structure is inside the value of the "root" key-value pair.
+- The value of the "root" key is another nested json object that contains all the directories and files inside "root".
+- Our file system distinguishes between files and directories based on the "type" attribute of the directory's/file's json object.
+- All the directories have their names as the key and their content as another nested json object in their value of the key-value pair.
+- The files also have their names as their key and their description, such as extension etc, in a json object which is its value in the key-value pair. 
+- The impleentation of all the function is in accordance with what was mentioned in the lab06 manual.
+- Limitation of the current version of our file system is mentioned below in the "Limitations" tab.
+
+How To Use:
+- cd to the directory in which thee python files are placed.
+- Please run the "OS_Project.py" python file with the following command:
+	
+	python OS_Project.py
+
+- Follow the instruction on the command line.
+- First write the command and then add a space and then add the command line argument
+
+Limitations:
+- The "ChDir" command right now only moves forward in to the directories and does not move back up to the parent. We will implement the "move above" fucntionality in the  future version. 

@@ -1,10 +1,13 @@
-
-class FileClass:
+class CustomFile:
 	"""Class to return file object"""
 
-	def __init__(self, name, fileobj):
-		self.name = name
-		self.fileobj = fileobj["type"]
+	#Constructor
+	def __init__(self, name, file_dict, mode):
+
+		self.name 	   = name
+		self.file_dict = file_dict
+		self.mode 	   = mode
+
 
 
 	''' This function taken in a file object which contains
@@ -43,7 +46,7 @@ class FileClass:
 
 		page = fileobj['page']
 
-		index = int(input("Enter the starting index to truncate file"))
+		index = int(input("Enter the starting index to truncate file: "))
 
 		for p in page:
 			text_to_truncate = data[str(p)]
