@@ -1,3 +1,5 @@
+SPECIAL_CHAR = "⁃"
+
 class CustomFile:
 	"""Class to return file object"""
 
@@ -14,7 +16,7 @@ class CustomFile:
 	 	the attributes of the file and data which contains
 	 	the contents written in the file.
 
-	 	It then prints out the content of file page wise'''
+	 	It then prints out the content of file page wise
 	def readFile(self, fileobj, data):
 		page = fileobj["page"]
 
@@ -22,8 +24,34 @@ class CustomFile:
 			p = str(p)
 			print(f"\nPage '{p}':")
 			print(f"Length = {len(data[p])}")
-			print("\t" + data[p])
+			print("\t" + data[p]) '''
 
+	def read(self, data):
+
+		"""
+		A function that returns the data of a file stored in the file structure
+		and None if if the mode if not read
+
+		@param self: The calling object
+		@param data: The dict object of the data in our file structure 
+		"""
+
+		if self.mode != "r":
+			print(f"ERROR: File is opened is {self.mode} mode, Please  open the file using 'Open <filename> r' for reading")
+			return
+
+		text_read = ""
+
+		#Each iteration of this for loop reads one chunk and  appends its data to text_read
+		for chunk, chunk_dict in self.file_dict["data"].items():
+
+			page   = chunk_dict["page"]
+			start  = int(chunk_dict["start"])
+			length = int(chunk_dict["length"])
+
+			text_read += data[page][start : start+end]
+			
+		return text_read
 
 
 	def readFileFrom(self, fileobj, data):

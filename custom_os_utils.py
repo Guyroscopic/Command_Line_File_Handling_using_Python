@@ -204,7 +204,7 @@ def Open(command_full):
                 print(f"'{file_path}' is not a file")
 
             else:
-                current_file = CustomFile(file_name, hierarchy, file_mode)    
+                current_file = CustomFile(file_name, hierarchy, file_mode)   
                 print(f"'{file_path}.txt' succesfully Opened in '{file_mode}' mode")   
                
 
@@ -231,6 +231,17 @@ def close(command_full):
     current_file = None
 
 
+def read():
+
+    global current_file
+
+    if not current_file:
+        print(f"ERROR: No file is opened, Please open a file using 'Open <filename> <mode>' before using 'Read' command")
+        return
+
+    read_data = current_file.read(data)
+    if read_data:
+        print(read_data)
 ######################    Utility Functions    ###############################################
 
 def checkHierarchy(path):
