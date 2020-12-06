@@ -1,6 +1,6 @@
 from custom_os_utils import *
 
-MENU_ITEMS = ["Create", "Delete", "MkDir", "Move", "ChDir", "Open", "Close", "ShowMap", "Read", "Exit"]
+MENU_ITEMS = ["Create", "Delete", "MkDir", "Move", "ChDir", "Open", "Close", "ShowMap", "Read", "ReadFrom", "Append", "Truncate", "Exit"]
 
 #os.system("cls")
 
@@ -54,6 +54,15 @@ while True:
 
                 elif command_func == "Read":
                         read()
+
+                elif command_func == "ReadFrom":
+                        readFrom()
+
+                elif command_func == "Append":
+                        append()
+                        
+                elif command_func == "Truncate":
+                        truncate()
                         
                 elif command_func == "ShowMap":
                         showMap()                
