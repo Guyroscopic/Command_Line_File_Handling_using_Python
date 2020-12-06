@@ -183,7 +183,7 @@ def Open(command_full):
         file_path      = command_full.split()[1]
         file_mode      = command_full.split()[2]
 
-        if file_mode not in ["r", "t", "a", "w"]:
+        if file_mode not in ["r", "rf", "t", "a", "w"]:
             print(f"ERROR: Invalid mode, Please chose a mode from: 'r', 't', 'a', 'w'")
             return
 
@@ -242,6 +242,49 @@ def read():
     read_data = current_file.read(data)
     if read_data:
         print(read_data)
+
+
+def readFrom():
+
+    global current_file
+
+    if not current_file:
+        print(f"ERROR: No file is opened, Please open a file using 'Open <filename> <mode> before using 'ReadFrom' command")
+        return
+
+    start_index = int(input("Enter the starting index : "))
+    size        = int(input("Enter the size number of characters you want to read : "))
+
+    read_data = current_file.readFrom(data, start_index, size)
+
+    if read_data:
+        print(read_data)
+
+
+def append():
+
+    if not current_file:
+        print(f"ERROR: No file is opened, Please open a file using 'Open <filename> <mode> before using 'Append' command")
+        return
+
+    text = input("Enter the text you want to append\n")
+
+    appended_text = current_file.append(data, text)
+
+def truncate():
+
+    if not current_file:
+        print(f"ERROR: No file is opened, Please open a file using 'Open <filename> <mode> before using 'ReadFrom' command")
+        return
+
+    size = int(input("Enter the size number of characters you want to keep : "))
+
+    data_trunc = current_file.truncate(data, size)
+    '''structure["data"] = data_trunc
+ 
+    with open("structure.json", "w") as f:
+        json.dump(structure, f)'''
+
 ######################    Utility Functions    ###############################################
 
 def checkHierarchy(path):
@@ -348,3 +391,5 @@ def getParent(path):
         return "/".join(path_list)
 
     return ROOT_PATH
+
+
