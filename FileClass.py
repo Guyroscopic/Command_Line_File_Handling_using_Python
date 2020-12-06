@@ -131,9 +131,6 @@ class CustomFile:
 			write_at = text[:index] + text_to_write + text[index:]
 
 		return write_at
-
-
-			
 			
 
 				
