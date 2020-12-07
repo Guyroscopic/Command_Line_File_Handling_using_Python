@@ -63,7 +63,9 @@ while True:
                         truncate()
                         
                 elif command_func == "ShowMap":
-                        showMap()                
+                        showMap()
+                elif command_func == "Move":
+                        move(command_full)         
 
                 elif command_func == "Exit":
                         print("\nQuitting")

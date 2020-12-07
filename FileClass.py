@@ -63,7 +63,7 @@ class CustomFile:
 			return
 
 		#reading the file 
-		text_read = self.read(data)
+		text_read = self.read()
 
 		if index > len(text_read):
 			print(f"INDEX ERROR: Couldn't read file. Index greater than file length{len(text_read)}")
@@ -99,6 +99,13 @@ class CustomFile:
 		else:
 			chunk_to_append   = 0
 
+		"""if not self.file_dict["data"]:
+			chunk_to_append = 1
+		else:
+			chunk_to_append   = int(getLastChunk(self.file_dict)[0]) + 1
+			
+		#Getting the free memory chunks in the data storage
+		free_memory  	  = getFreeMemory(data)	"""	
 		
 		for page, free_memory_chunks in free_memory.items():
 
@@ -193,78 +200,7 @@ class CustomFile:
 		self.file_dict["data"][truncate_chunk]["length"] = str(int(self.file_dict["data"][truncate_chunk]["length"]) - int(char_to_truncate))
 
 
-		'''for chunk, chunk_dict in self.file_dict["data"].items():
-
-
-			page   = chunk_dict["page"]
-			start  = int(chunk_dict["start"])
-			chunk_length = int(chunk_dict["length"])
-
-			text = data[page][start + total_length]
-
-			length = 0
-			for s in text:
-				if (length == size) or (length > size):
-					data[page][start+chunk_length].replace(data[page][length: length+1], SPECIAL_CHAR)
-				else:
-					pass
-				length += 1
-							
-		print(data)
-		return data'''
-
-
-	'''def move(self, fileobj, data):
-
-		to_move_start_index = int(input("Enter the start index of the content to be moved"))
-		to_move_end_index = int(input("Enter the end index of the content to be moved"))
-		
-		final_index = int(input("Enter the final index"))
-
-		page = fileobj['page']
-		for p in page:
-			text = data[str(p)]
-			text_to_move = text[to_move_start_index : to_move_end_index]
-			length = len(text_to_move)
-			length_full = len(text)
-			move_text = text[final_index : length]
-
-			moved_text = text[:final_index] + text_to_move + text[final_index:length_full]
-
-		return moved_text'''
-
-
-
-	'''def appendFile(self, fileobj, data):
-		page = fileobj["page"]
-
-		text_to_append = input("Enter the text to append:\n")
-
-		for p in page:
-			p = str(p)
-			
-			file_content = data[p]
-			file_content += text_to_append
-		
-		return file_content'''
-
-
-	'''def writeAtFile(self, fileobj, data):
-		page = fileobj["page"]
-
-		index = int(input("Give the index where you want to write at \t"))
-
-		text_to_write = input("Enter Text\n")
-
-		for p in page:
-			text = data[str(p)]
-
-			write_at = text[:index] + text_to_write + text[index:]
-
-
-		return write_at'''
-
-	def writeFile(self, data, text):
+	def write(self, text):
 
 		""" 
 		This function overwrites the content of a file.
@@ -278,43 +214,61 @@ class CustomFile:
 			print(f"ERROR: File is opened in {self.mode} mode, Please  open the file using 'Open <filename> w' for writing")
 			return
 
-		# deleting the content of file by size = 0
+		#Deleting the content of file
 		size = 0
 		self.mode = 't'
-		empty_file, data = self.truncate(data, size)
+		empty_file = self.truncate(data, size)
 
 
-		# After deleting, append the text into the empty file
+		#Writing the text into the empty file
 		self.mode = 'a'
 		write_text = self.append(text, data)
-		print(write_text)
-		print(data)
+		
+		#Setting the mode back to w
+		self.mode = 'w'
+		#print(self.file_dict)
+		#print(data)
+		#return write_text
 
-		return write_text
 
-
-	def writeAtFile(self, data, text, index):
+	def writeAt(self, data, text, index):
 
 		""" 
-			This function writes the text into the given location of file
+		This function writes the text into the given location of file
 
-			@param data : dict obj of our data storage
-			@param text : text to write into the file
-			@param index : location to write on
+		@param data : dict obj of our data storage
+		@param text : text to write into the file
+		@param index : location to write on
 		"""
 
 		if self.mode != 'w':
 			print(f"ERROR: File is opened in {self.mode} mode, Please  open the file using 'Open <filename> w' for writing")
 			return
 
-		chunk_to_write_at, index_to_write_at = getChunksToTruncate(index, self.file_dict)
-		print(chunk_to_write_at)
+		self.mode = 'r'
+		file_text = self.read()
+
+		file_lentgh = len(file_text)
+		if index > file_lentgh:
+			print(f"EEROR: Total file size is {file_lentgh}")
+			return
+
+		#Deleting the data from the given index onwards
+		self.mode = 't'
+		truncate_file = self.truncate(data, index)
+
+		#Writing the user data on the given index
+		self.mode = 'a'
+		write_text_at = self.append(text, data)
 		
-		page = self.file_dict["data"][chunk_to_write_at]["page"]
+		#Reseting the mode back to w
+		self.mode = 'w'
+
+		''''page = self.file_dict["data"][chunk_to_write_at]["page"]
 		print(len(data[page]))
 		data[page] = data[page][:index] + text + data[page][index+len(text):]
 		print(len(data[page]))
-		print(data[page])
+		print(data[page])'''
 
 def getChunksToTruncate(size, file_dict):
 
@@ -431,7 +385,7 @@ def emptyFile(file_dict, data):
 		length = int(file_dict["data"][chunk]["length"])
 
 		data[page] =  data[page][:start] + SPECIAL_CHAR * length + data[page][start+length:]
-	
+		file_dict["data"].pop(chunk)
 	return file_dict, data
 
 

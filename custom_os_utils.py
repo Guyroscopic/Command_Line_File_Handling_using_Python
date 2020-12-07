@@ -4,7 +4,7 @@ ROOT_PATH  = ""
 current_path = ROOT_PATH
 current_file = None
 
-print(len(data["0"]))
+#print(len(data["0"]))
 
 ######################      Function that operate on/modify File structure    ################
 
@@ -167,14 +167,18 @@ def showMap():
 def move(command_full):
 
     try:
-        src_file       = command_full.split()[1]
-        src_filename   = src_file.split("/")[-1]
+        src_file_path  = command_full.split()[1]
+        src_file_path = getAbsPathfromRelPath(src_file_path)
+        src_filename   = src_file_path.split("/")[-1]
 
-        trgt_file      = command_full.split()[2]
-        trgt_filename  = trgt_file.split("/")[-1]
+        trgt_file_path = command_full.split()[2]
+        trgt_file_path = getAbsPathfromRelPath(trgt_file_path)
+        trgt_filename  = trgt_file_path.split("/")[-1]
 
-        src_hierarchy  = checkHierarchy(src_file)
-        trgt_hierarchy = checkHierarchy(trgt_file)
+        #print(src_file_path, trgt_file_path)
+        #print(src_filename, trgt_filename)
+        src_hierarchy  = checkHierarchy(src_file_path.split("/"))
+        trgt_hierarchy = checkHierarchy(trgt_file_path.split("/"))
 
         #Checking if both files exist
         if type(src_hierarchy) == str:
@@ -189,8 +193,13 @@ def move(command_full):
         src_data     = src_file_obj.read()
 
         #Writing the data from the Source File
-        trgt_file_obj = CustomFile(trgt_filename, trgt_hierarchy, "") ###Either w or a
-    
+        trgt_file_obj = CustomFile(trgt_filename, trgt_hierarchy, "w") ###Either w or a
+        trgt_file_obj.write(src_data)
+
+        print(src_file_obj)
+        print(trgt_file_obj)
+
+
     except IndexError as ie:
         print("\nERROR: No Directory name or path specified, usage: 'ChDir <directoryPath>'")    
 
@@ -322,7 +331,11 @@ def write():
         return
 
     text = input("Enter the text you want to write into the file : \n")
-    current_file.writeFile(data, text)
+    current_file.write(text)
+
+    #Updating the File Structure and Data Storage in Non-Volatile memory
+    with open("structure.json", "w") as f:
+        json.dump(structure, f)
 
 
 def writeAt():
@@ -334,7 +347,12 @@ def writeAt():
     text = input("Enter the text you want to write into the file : \n")
     index = int(input("Enter the index you want to write at:"))
 
-    current_file.writeAtFile(data, text, index)
+    current_file.writeAt(data, text, index)
+    #print(len(data["0"]))
+
+    #Updating the File Structure and Data Storage in Non-Volatile memory
+    with open("structure.json", "w") as f:
+        json.dump(structure, f)
 
 ######################    Utility Functions    ###############################################
 
