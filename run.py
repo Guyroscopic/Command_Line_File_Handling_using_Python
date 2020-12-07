@@ -1,6 +1,6 @@
 from custom_os_utils import *
 
-MENU_ITEMS = ["Create", "Delete", "MkDir", "Move", "ChDir", "Open", "Close", "ShowMap", "Read", "ReadFrom", "Append", "Truncate", "Exit"]
+MENU_ITEMS = ["Create", "Delete", "MkDir", "Move", "ChDir", "Open", "Close", "ShowMap", "Read", "ReadFrom", "Append", "Write", "WriteAt", "Truncate", "Exit"]
 
 #os.system("cls")
 
@@ -60,6 +60,12 @@ while True:
 
                 elif command_func == "Append":
                         append()
+
+                elif command_func == "Write":
+                        write()
+
+                elif command_func == "WriteAt":
+                        writeAt()
                         
                 elif command_func == "Truncate":
                         truncate()

@@ -287,7 +287,26 @@ def truncate():
     current_file.truncate(data, size)
 
 
-    
+def write():
+
+    if not current_file:
+        print(f"ERROR: No file is opened, Please open a file using 'Open <filename> <mode> before using 'Write' command")
+        return
+
+    text = input("Enter the text you want to write into the file : \n")
+    current_file.writeFile(data, text)
+
+
+def writeAt():
+
+    if not current_file:
+        print(f"ERROR: No file is opened, Please open a file using 'Open <filename> <mode> before using 'Write' command")
+        return
+
+    text = input("Enter the text you want to write into the file : \n")
+    index = int(input("Enter the index you want to write at:"))
+
+    current_file.writeAtFile(data, text, index)
 
 ######################    Utility Functions    ###############################################
 
