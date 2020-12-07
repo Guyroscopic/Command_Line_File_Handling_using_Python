@@ -226,21 +226,21 @@ class CustomFile:
 		
 		#Setting the mode back to w
 		self.mode = 'w'
-		#print(self.file_dict)
-		#print(data)
-		#return write_text
+		
 
 
 	def writeAt(self, data, text, index):
 
 		""" 
-		This function writes the text into the given location of file
+		A function that writes the text into the given location of file
 
 		@param data : dict obj of our data storage
 		@param text : text to write into the file
 		@param index : location to write on
+
 		"""
 
+		# check if the file in opened in valid mode
 		if self.mode != 'w':
 			print(f"ERROR: File is opened in {self.mode} mode, Please  open the file using 'Open <filename> w' for writing")
 			return
@@ -249,6 +249,8 @@ class CustomFile:
 		file_text = self.read()
 
 		file_lentgh = len(file_text)
+
+		# if the index is greater than file size
 		if index > file_lentgh:
 			print(f"EEROR: Total file size is {file_lentgh}")
 			return
@@ -269,6 +271,62 @@ class CustomFile:
 		data[page] = data[page][:index] + text + data[page][index+len(text):]
 		print(len(data[page]))
 		print(data[page])'''
+
+
+
+
+	def move(self, start, to, size):
+
+		"""
+		A fucntion that moves "size" number of bytes within the file from
+		"start" index to "to" index
+
+		@param start: Starting index of text to move
+		@param to : Desired index of the text to move
+		@param size : Size number of bytes to move
+
+		"""
+
+		if size < 0:
+			print("Invalid Size: Size less than zero")
+			return
+
+		if start < 0 or to < 0 :
+			print("INDEX ERROR: Index less than zero")
+			return
+
+
+		self.mode = 'r'
+
+		# reading the text from file
+		text = self.read()
+		size_of_file = len(text)
+
+
+		#checking for invalid indices
+		if size > size_of_file or start > size_of_file or to > size_of_file:
+			print(f"INVALID INDEX : Size of file is {size_of_file} bytes")
+			return 
+
+
+		text_to_move = text[start : start + size]
+		text_to_replace = text[to : to + size]
+		
+
+		length = len(text_to_move)
+
+		#if the text to move occurs after the desired location
+		if start > to:
+			text = text[:to] + text_to_move + text[to+size : start] + text_to_replace + text[start + size:]
+		#if text to move occurs before the desired location
+		else:
+			text = text[:start] + text_to_replace + text[start+size : to] + text_to_move + text[to + size:]
+
+		self.mode = 'w'
+		self.write(text)
+
+
+
 
 def getChunksToTruncate(size, file_dict):
 
@@ -365,7 +423,7 @@ def emptyFile(file_dict, data):
 
 
 	"""
-	This function delets the content of a file while 
+	A function that delets the content of a file while 
 	retaining the file itself.
 
 	@param data :  dict object of our total data storage
