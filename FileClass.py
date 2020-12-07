@@ -79,7 +79,7 @@ class CustomFile:
 
 
 		#Checking if that page has memory
-		if not hasEnoughMemory("BCSS", data):
+		if not hasEnoughMemory(text, data):
 			print(f"ERROR: not enough memory")
 			return
 
@@ -109,10 +109,10 @@ class CustomFile:
 
 					#Adding the appended chunk to the data of file dictionary
 					self.file_dict["data"][f"{chunk_to_append}"] = {
-										"page"  : page,
-										"start" : chunk_start,
-										"length": len(text_to_add)
-									 }
+																		"page"  : page,
+																		"start" : str(chunk_start),
+																		"length": str(len(text_to_add))
+									 							   }
 					chunk_to_append += 1
 			
 

@@ -190,7 +190,6 @@ def Open(command_full):
         file_path      = getAbsPathfromRelPath(file_path)
         
         file_name   = file_path.split("/")[-1]
-        #parent_dir     = file_path.split("/")[:-1]
 
         #hierarchy is the required file json object
         hierarchy      = checkHierarchy(file_path.split("/"))
@@ -269,8 +268,7 @@ def append():
 
     text = input("Enter the text you want to append\n")
 
-    appended_text = current_file.append(text, data)
-    print(current_file.file_dict)
+    current_file.append(text, data)
 
     #Updating the File Structure and Data Storage in Non-Volatile memory
     with open("structure.json", "w") as f:
@@ -388,7 +386,7 @@ def getParent(path):
     if path == ROOT_PATH:
         return ROOT_PATH
 
-        path_list = path.split("/")[:-1]
+    path_list = path.split("/")[:-1]
 
     if len(path_list):
         print("/".join(path_list))
