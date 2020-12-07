@@ -82,10 +82,14 @@ class CustomFile:
 			print(f"ERROR: not enough memory")
 			return
 
-		#Getting the free memory chunks in the data storage
-		free_memory  	  = getFreeMemory(data)
-		chunk_to_append   = int(getLastChunk(self.file_dict)[0]) + 1
+		if not self.file_dict["data"]:
+			chunk_to_append = 1
 
+		else:
+			chunk_to_append   = int(getLastChunk(self.file_dict)[0]) + 1
+			
+		#Getting the free memory chunks in the data storage
+		free_memory  	  = getFreeMemory(data)		
 		
 		for page, free_memory_chunks in free_memory.items():
 
@@ -283,15 +287,16 @@ class CustomFile:
 		# deleting the content of file by size = 0
 		size = 0
 		self.mode = 't'
-		empty_file, data = self.truncate(data, size)
+		empty_file = self.truncate(data, size)
 
 
 		# After deleting, append the text into the empty file
 		self.mode = 'a'
 		write_text = self.append(text, data)
-		print(write_text)
+		
+		self.mode = 'w'
+		print(self.file_dict)
 		print(data)
-
 		return write_text
 
 
@@ -309,14 +314,27 @@ class CustomFile:
 			print(f"ERROR: File is opened in {self.mode} mode, Please  open the file using 'Open <filename> w' for writing")
 			return
 
-		chunk_to_write_at, index_to_write_at = getChunksToTruncate(index, self.file_dict)
-		print(chunk_to_write_at)
+		self.mode = 'r'
+		file_text = self.read(data)
+
+		file_lentgh = len(file_text)
+		if index > file_lentgh:
+			print(f"EEROR: Total file size is {file_lentgh}")
+			return
+
+		self.mode = 't'
+		truncate_file = self.truncate(data, index)
+
+		self.mode = 'a'
+		write_text_at = self.append(text, data)
 		
-		page = self.file_dict["data"][chunk_to_write_at]["page"]
+		self.mode = 'w'
+
+		''''page = self.file_dict["data"][chunk_to_write_at]["page"]
 		print(len(data[page]))
 		data[page] = data[page][:index] + text + data[page][index+len(text):]
 		print(len(data[page]))
-		print(data[page])
+		print(data[page])'''
 
 def getChunksToTruncate(size, file_dict):
 
@@ -433,7 +451,7 @@ def emptyFile(file_dict, data):
 		length = int(file_dict["data"][chunk]["length"])
 
 		data[page] =  data[page][:start] + SPECIAL_CHAR * length + data[page][start+length:]
-	
+		file_dict["data"].pop(chunk)
 	return file_dict, data
 
 
