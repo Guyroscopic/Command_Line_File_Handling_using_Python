@@ -1,17 +1,6 @@
 from custom_os_utils import *
 
-MENU_ITEMS = ["Create", "Delete", "MkDir", "Move", "ChDir", "Open", "Close", "ShowMap", "Read", "ReadFrom", "Append", "Truncate", "Exit"]
-
-#os.system("cls")
-
-
-#if the root os path does not exist
-#if not os.path.isdir(ROOT_PATH):
-#        os.chdir("C:/")
-#        os.mkdir("C:/OS_Project_root")
-#        print("Directory did not exist So created one")
-        
-#os.chdir(ROOT_PATH)
+MENU_ITEMS = ["Create", "Delete", "MkDir", "Move", "ChDir", "Open", "Close", "ShowMap", "Read", "ReadFrom", "Append", "Write", "WriteAt", "Truncate", "Exit"]
 
 
 for i, item in enumerate(MENU_ITEMS):
@@ -22,8 +11,11 @@ for i, item in enumerate(MENU_ITEMS):
 
 
 while True:
-
-        command_full = input("\nEnter a Command: ")
+        from custom_os_utils import current_path
+        if current_path == ROOT_PATH:
+                command_full = input(f"\nroot {SPECIAL_CHAR} ")
+        else:
+                command_full = input(f"\nroot/{current_path} {SPECIAL_CHAR} ")
 
         try:
                 command_func = command_full.split()[0]
@@ -60,6 +52,12 @@ while True:
 
                 elif command_func == "Append":
                         append()
+
+                elif command_func == "Write":
+                        write()
+
+                elif command_func == "WriteAt":
+                        writeAt()
                         
                 elif command_func == "Truncate":
                         truncate()

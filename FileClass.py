@@ -1,5 +1,12 @@
-import re
+import json
+
 SPECIAL_CHAR = "⁃"
+
+with open("structure.json") as f:
+  structure = json.load(f)
+
+root = structure["root"]
+data = structure["data"]
 
 class CustomFile:
 	
@@ -85,7 +92,12 @@ class CustomFile:
 
 		#Getting the free memory chunks in the data storage
 		free_memory  	  = getFreeMemory(data)
-		chunk_to_append   = int(getLastChunk(self.file_dict)[0]) + 1
+		last_chunk 		  = getLastChunk(self.file_dict)
+
+		if last_chunk:
+			chunk_to_append   = int(last_chunk[0]) + 1
+		else:
+			chunk_to_append   = 0
 
 		
 		for page, free_memory_chunks in free_memory.items():
@@ -128,6 +140,9 @@ class CustomFile:
 		@param size: The size of bytes to retain
 		"""
 
+		if self.mode != 't':
+			print(f"ERROR: File is opened in {self.mode} mode, Please  open the file using 'Open <filename> t' to truncate\n")
+			return
 		#### APPLY CHECK FOR SIZE = 0 ####
 
 
@@ -141,17 +156,16 @@ class CustomFile:
 			print(f"EEROR: Total file size is {file_lentgh}")
 			return
 
-		#truncate_size = file_lentgh- size
-
+		# size = 0 means the user wants to remove the whole content of file
+		# Emptying File
+		if size == 0:
+			self.file_dict, data = emptyFile(self.file_dict, data)
+			return self.file_dict, data
 
 		truncate_chunk, char_to_truncate = getChunksToTruncate(size, self.file_dict)
 
-
-		print("TRUNCATE CHUNK: ", truncate_chunk)
-		print("\nCHAR TO TRUNCATE: ",char_to_truncate)
-
-
 		chunks_to_pop = []
+
 		for chunk, chunk_dict in self.file_dict["data"].items():
 
 			if int(chunk) > int(truncate_chunk):
@@ -172,22 +186,12 @@ class CustomFile:
 		truncate_chunk_length = int(self.file_dict["data"][truncate_chunk]["length"])
 		truncate_chunk_end = truncate_chunk_start + truncate_chunk_length
 
-		print("TRUNC PAGE: ", truncate_chunk_page)
-		print("\nTRUNC START: ", truncate_chunk_start)
-		print("\nTRUNC length: ", truncate_chunk_length)
-		print("\nTRUNC end: ", truncate_chunk_end)
-
 		start_truncate = truncate_chunk_end - int(char_to_truncate)
 		#print(data[truncate_chunk_page][start_truncate:end])
-		print("Start Trunc: ", start_truncate)
 		data[truncate_chunk_page] =  data[truncate_chunk_page][:start_truncate] + SPECIAL_CHAR * int(char_to_truncate) + data[truncate_chunk_page][truncate_chunk_end:]
 		#data[truncate_chunk_page] = data[truncate_chunk_page].replace(data[truncate_chunk_page][start_truncate : end] , SPECIAL_CHAR * int(char_to_truncate))
 		self.file_dict["data"][truncate_chunk]["length"] = str(int(self.file_dict["data"][truncate_chunk]["length"]) - int(char_to_truncate))
 
-		print(data)
-		print(len(data["0"]))
-		print(self.file_dict)
-		return self.file_dict
 
 		'''for chunk, chunk_dict in self.file_dict["data"].items():
 
@@ -260,7 +264,57 @@ class CustomFile:
 
 		return write_at'''
 
+	def writeFile(self, data, text):
 
+		""" 
+		This function overwrites the content of a file.
+
+		@param data : dict object of our data storage
+		@param text : The text to write into the file
+
+		"""
+
+		if self.mode != 'w':
+			print(f"ERROR: File is opened in {self.mode} mode, Please  open the file using 'Open <filename> w' for writing")
+			return
+
+		# deleting the content of file by size = 0
+		size = 0
+		self.mode = 't'
+		empty_file, data = self.truncate(data, size)
+
+
+		# After deleting, append the text into the empty file
+		self.mode = 'a'
+		write_text = self.append(text, data)
+		print(write_text)
+		print(data)
+
+		return write_text
+
+
+	def writeAtFile(self, data, text, index):
+
+		""" 
+			This function writes the text into the given location of file
+
+			@param data : dict obj of our data storage
+			@param text : text to write into the file
+			@param index : location to write on
+		"""
+
+		if self.mode != 'w':
+			print(f"ERROR: File is opened in {self.mode} mode, Please  open the file using 'Open <filename> w' for writing")
+			return
+
+		chunk_to_write_at, index_to_write_at = getChunksToTruncate(index, self.file_dict)
+		print(chunk_to_write_at)
+		
+		page = self.file_dict["data"][chunk_to_write_at]["page"]
+		print(len(data[page]))
+		data[page] = data[page][:index] + text + data[page][index+len(text):]
+		print(len(data[page]))
+		print(data[page])
 
 def getChunksToTruncate(size, file_dict):
 
@@ -280,7 +334,8 @@ def getChunksToTruncate(size, file_dict):
 
 def getLastChunk(file_dict):
 
-	return list(file_dict["data"].items())[-1]
+	if file_dict["data"].items():
+		return list(file_dict["data"].items())[-1]
 				
 
 def hasEnoughMemory(text_to_insert, data):
@@ -307,7 +362,7 @@ def getFreeMemory(data):
 	"""
 	A utillity fucntion that returns a dictionary of free chunks of memory in every page 
 
-	@param data: dict object of out total data storage
+	@param data: dict object of our total data storage
 	"""
 
 	free_memory = {}
@@ -352,57 +407,33 @@ def getFreeMemory(data):
 	return free_memory
 
 
-	"""s = ""
-	free_chunks = {}
+def emptyFile(file_dict, data):
 
-	for page, page_data in data.items():
-		a = 0
-		start_index = 0
-		end_index = 0
-		free_chunk_length = 0
-		
 
-		i = 0
-		chunk_id = 1
-		for c in page:
-			
-			matches = re.finditer(SPECIAL_CHAR, page_data)
+	"""
+	This function delets the content of a file while 
+	retaining the file itself.
 
-			free_memory = [match.start() for match in matches]
->>>>>>> e7edd211459ab30b90a21b90f8beb6793b81f643
-			
-			free_chunks = {}
-			end_index = 0
-			free_chunk_length = 0
+	@param data :  dict object of our total data storage
+	@param file_dict : dict object of our file object
+	"""
 
-			for i in range(len(free_memory)-1):
+	chunks_to_pop = []
 
-				prev_index = free_memory[i]
-				next_index = free_memory[i+1]
-				diff = next_index - prev_index
+	for chunk, chunk_dict in file_dict["data"].items():
+		chunks_to_pop.append(chunk)
 
-				if diff == 1:
-					end_index += 1
-					free_chunk_length += 1
 
-				elif diff > 1 or next_index == 1023:
-					free_chunk_length += 1
-					start_index = prev_index - free_chunk_length
-					#free_chunks[page] = {str(chunk_id) : {"start" : start_index, "end" : start_index+free_chunk_length}}
-					
-					free_chunk_length = 0
-					chunk_id += 1
-					end_index+1
-			print(free_chunks)
-		if len(free_memory) > len(text):
-			return free_memory
+	for chunk in chunks_to_pop:
 
-		else:
-			print("Memory Full")
-			return"""
+		page   = file_dict["data"][chunk]["page"]
+		start  = int(file_dict["data"][chunk]["start"])
+		length = int(file_dict["data"][chunk]["length"])
+
+		data[page] =  data[page][:start] + SPECIAL_CHAR * length + data[page][start+length:]
+	
+	return file_dict, data
 
 
 
-
-
-		
+	

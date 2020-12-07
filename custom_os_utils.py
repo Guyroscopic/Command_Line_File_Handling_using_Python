@@ -1,16 +1,10 @@
-import json
-from FileClass import CustomFile
+from FileClass import *
 
 ROOT_PATH  = ""
 current_path = ROOT_PATH
 current_file = None
 
-with open("structure.json") as f:
-  structure = json.load(f)
-
-root = structure["root"]
-data = structure["data"]
-
+print(len(data["0"]))
 
 ######################      Function that operate on/modify File structure    ################
 
@@ -35,7 +29,8 @@ def create(command_full):
                 except KeyError as ke:
                     hierarchy[file_to_create] = {
                                                     "type"     : "file",
-                                                    "extension": ".txt"
+                                                    "extension": ".txt",
+                                                    "data"     : {}
                                                 }
 
                     with open("structure.json", "w") as f:
@@ -269,7 +264,7 @@ def append():
     text = input("Enter the text you want to append\n")
 
     current_file.append(text, data)
-
+    
     #Updating the File Structure and Data Storage in Non-Volatile memory
     with open("structure.json", "w") as f:
         json.dump(structure, f)
@@ -283,9 +278,32 @@ def truncate():
     size = int(input("Enter the size number of characters you want to keep : "))
 
     current_file.truncate(data, size)
-
-
     
+    #Updating the File Structure and Data Storage in Non-Volatile memory
+    with open("structure.json", "w") as f:
+        json.dump(structure, f)
+
+
+def write():
+
+    if not current_file:
+        print(f"ERROR: No file is opened, Please open a file using 'Open <filename> <mode> before using 'Write' command")
+        return
+
+    text = input("Enter the text you want to write into the file : \n")
+    current_file.writeFile(data, text)
+
+
+def writeAt():
+
+    if not current_file:
+        print(f"ERROR: No file is opened, Please open a file using 'Open <filename> <mode> before using 'Write' command")
+        return
+
+    text = input("Enter the text you want to write into the file : \n")
+    index = int(input("Enter the index you want to write at:"))
+
+    current_file.writeAtFile(data, text, index)
 
 ######################    Utility Functions    ###############################################
 
