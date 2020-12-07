@@ -99,13 +99,6 @@ class CustomFile:
 		else:
 			chunk_to_append   = 0
 
-		"""if not self.file_dict["data"]:
-			chunk_to_append = 1
-		else:
-			chunk_to_append   = int(getLastChunk(self.file_dict)[0]) + 1
-			
-		#Getting the free memory chunks in the data storage
-		free_memory  	  = getFreeMemory(data)	"""	
 		
 		for page, free_memory_chunks in free_memory.items():
 

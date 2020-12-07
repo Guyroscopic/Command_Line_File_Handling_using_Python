@@ -278,21 +278,28 @@ def read():
         print(read_data)
 
 
-def readFrom():
+def readFrom(command_full):
 
     global current_file
 
-    if not current_file:
-        print(f"ERROR: No file is opened, Please open a file using 'Open <filename> <mode> before using 'ReadFrom' command")
-        return
+    try:
 
-    start_index = int(input("Enter the starting index : "))
-    size        = int(input("Enter the size number of characters you want to read : "))
+        start_index = int(command_full.split()[1])
+        size        = int(command_full.split()[2])
 
-    read_data = current_file.readFrom(data, start_index, size)
+        if not current_file:
+            print(f"ERROR: No file is opened, Please open a file using 'Open <filename> <mode> before using 'ReadFrom' command")
+            return
 
-    if read_data:
-        print(read_data)
+        # perform read operation
+        read_data = current_file.readFrom(data, start_index, size)
+
+        if read_data:
+            print(read_data)
+
+    except IndexError as e:
+        print("\nERROR: Invalid use of ReadFrom command, usage: 'ReadFrom <index> <size>'")
+
 
 
 def append():
@@ -301,27 +308,37 @@ def append():
         print(f"ERROR: No file is opened, Please open a file using 'Open <filename> <mode> before using 'Append' command")
         return
 
-    text = input("Enter the text you want to append\n")
+    try:
+        text_to_append = input("\nEnter text to append : \n")
+        # append text to file
+        current_file.append(text_to_append, data)
+        
+        #Updating the File Structure and Data Storage in Non-Volatile memory
+        with open("structure.json", "w") as f:
+            json.dump(structure, f)
 
-    current_file.append(text, data)
-    
-    #Updating the File Structure and Data Storage in Non-Volatile memory
-    with open("structure.json", "w") as f:
-        json.dump(structure, f)
+    except IndexError as ie:
+        print("\nERROR: Invalid use of Append command, usage: 'Append'")
 
-def truncate():
+
+def truncate(command_full):
 
     if not current_file:
         print(f"ERROR: No file is opened, Please open a file using 'Open <filename> <mode> before using 'ReadFrom' command")
         return
 
-    size = int(input("Enter the size number of characters you want to keep : "))
+    try:
+        size = int(command_full.split()[1])
 
-    current_file.truncate(data, size)
-    
-    #Updating the File Structure and Data Storage in Non-Volatile memory
-    with open("structure.json", "w") as f:
-        json.dump(structure, f)
+        current_file.truncate(data, size)
+        
+        #Updating the File Structure and Data Storage in Non-Volatile memory
+        with open("structure.json", "w") as f:
+            json.dump(structure, f)
+
+    except IndexError as ie:
+        print("\nERROR: Invalid use of Truncate command, usage: 'Truncate <size>'")
+
 
 
 def write():
@@ -330,7 +347,7 @@ def write():
         print(f"ERROR: No file is opened, Please open a file using 'Open <filename> <mode> before using 'Write' command")
         return
 
-    text = input("Enter the text you want to write into the file : \n")
+    text = input("Text : \n")
     current_file.write(text)
 
     #Updating the File Structure and Data Storage in Non-Volatile memory
@@ -338,21 +355,51 @@ def write():
         json.dump(structure, f)
 
 
-def writeAt():
+def writeAt(command_full):
 
     if not current_file:
         print(f"ERROR: No file is opened, Please open a file using 'Open <filename> <mode> before using 'Write' command")
         return
 
-    text = input("Enter the text you want to write into the file : \n")
-    index = int(input("Enter the index you want to write at:"))
+    try:
+        index = int(command_full.split()[1])
 
-    current_file.writeAt(data, text, index)
-    #print(len(data["0"]))
+        text = input("\nText : \n")
+        current_file.writeAt(data, text, index)
+        #print(len(data["0"]))
 
-    #Updating the File Structure and Data Storage in Non-Volatile memory
-    with open("structure.json", "w") as f:
-        json.dump(structure, f)
+        #Updating the File Structure and Data Storage in Non-Volatile memory
+        with open("structure.json", "w") as f:
+            json.dump(structure, f)
+
+    except IndexError as ie:
+        print("\nERROR: Invalid use of WriteAt command, usage: 'Truncate <index>'")
+
+
+
+def move_within_file(command_full):
+
+    
+
+    if not current_file:
+        print(f"ERROR: No file is opened, Please open a file using 'Open <filename> <mode> before using 'Move' command")
+        return
+
+    try:
+        start_index = int(command_full.split()[1])
+        to = int(command_full.split()[2])
+        size = int(command_full.split()[3])
+
+        current_file.move(start_index, to, size)
+
+
+         #Updating the File Structure and Data Storage in Non-Volatile memory
+        with open("structure.json", "w") as f:
+            json.dump(structure, f)
+
+    except IndexError as ie:
+        print("\nERROR: Invalid use of MoveWithin command, usage: 'MoveText <from> <to> <size>'")
+
 
 ######################    Utility Functions    ###############################################
 

@@ -1,6 +1,6 @@
 from custom_os_utils import *
 
-MENU_ITEMS = ["Create", "Delete", "MkDir", "Move", "ChDir", "Open", "Close", "ShowMap", "Read", "ReadFrom", "Append", "Write", "WriteAt", "Truncate", "Exit"]
+MENU_ITEMS = ["Create", "Delete", "MkDir", "Move", "MoveText", "ChDir", "Open", "Close", "ShowMap", "Read", "ReadFrom", "Append", "Write", "WriteAt", "Truncate", "Exit"]
 
 
 for i, item in enumerate(MENU_ITEMS):
@@ -48,7 +48,7 @@ while True:
                         read()
 
                 elif command_func == "ReadFrom":
-                        readFrom()
+                        readFrom(command_full)
 
                 elif command_func == "Append":
                         append()
@@ -57,13 +57,17 @@ while True:
                         write()
 
                 elif command_func == "WriteAt":
-                        writeAt()
+                        writeAt(command_full)
                         
                 elif command_func == "Truncate":
-                        truncate()
+                        truncate(command_full)
+
+                elif command_func == "MoveText":
+                        move_within_file(command_full)
                         
                 elif command_func == "ShowMap":
                         showMap()
+
                 elif command_func == "Move":
                         move(command_full)         
 
