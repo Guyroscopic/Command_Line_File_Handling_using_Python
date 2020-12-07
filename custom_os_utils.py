@@ -164,6 +164,37 @@ def showMap():
     prettyPrint(current_dict, 1)
 
 
+def move(command_full):
+
+    try:
+        src_file       = command_full.split()[1]
+        src_filename   = src_file.split("/")[-1]
+
+        trgt_file      = command_full.split()[2]
+        trgt_filename  = trgt_file.split("/")[-1]
+
+        src_hierarchy  = checkHierarchy(src_file)
+        trgt_hierarchy = checkHierarchy(trgt_file)
+
+        #Checking if both files exist
+        if type(src_hierarchy) == str:
+            print(f"\nERROR: Source File '{src_hierarchy}'.txt could not be found")
+            return
+        if type(trgt_hierarchy) == str:
+            print(f"\nERROR: Source File '{trgt_hierarchy}'.txt could not be found")
+            return
+        
+        #Reading the data from the Source File
+        src_file_obj = CustomFile(src_filename, src_hierarchy, "r")
+        src_data     = src_file_obj.read()
+
+        #Writing the data from the Source File
+        trgt_file_obj = CustomFile(trgt_filename, trgt_hierarchy, "") ###Either w or a
+    
+    except IndexError as ie:
+        print("\nERROR: No Directory name or path specified, usage: 'ChDir <directoryPath>'")    
+
+
 ######################    Functions that operate on/modify File Data    ######################
 
 def Open(command_full):
@@ -233,7 +264,7 @@ def read():
         print(f"ERROR: No file is opened, Please open a file using 'Open <filename> <mode>' before using 'Read' command")
         return
 
-    read_data = current_file.read(data)
+    read_data = current_file.read()
     if read_data:
         print(read_data)
 

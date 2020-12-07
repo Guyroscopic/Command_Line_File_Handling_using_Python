@@ -18,7 +18,7 @@ class CustomFile:
 		self.mode 	   = mode
 
 
-	def read(self, data):
+	def read(self):
 
 		"""
 		A function that returns the data of a file stored in the file structure
@@ -148,7 +148,7 @@ class CustomFile:
 
 		#Each iteration of this for loop reads one chunk and  appends its data to text_read
 		self.mode = 'r'
-		file_text = self.read(data)
+		file_text = self.read()
 		self.mode = 't'
 
 		file_lentgh = len(file_text)
