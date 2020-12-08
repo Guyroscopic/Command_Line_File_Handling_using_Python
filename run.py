@@ -1,13 +1,14 @@
 from custom_os_utils import *
 
-MENU_ITEMS = ["Create", "Delete", "MkDir", "Move", "MoveText", "ChDir", "Open", "Close", "ShowMap", "Read", "ReadFrom", "Append", "Write", "WriteAt", "Truncate", "Exit"]
+commands = ["create", "delete", "mkdir", "move", "movetext", "cd", "open", "close", "showmap", "read", "readfrom", "append", "write", "writeat", "truncate", "exit", "help"]
 
 
-for i, item in enumerate(MENU_ITEMS):
+"""for i, item in enumerate(MENU_ITEMS):
 	if i == 0:
 		print(f"Chose a Command:\n\t{i+1}){item}")
 	else:
-		print(f"\t{i+1}){item}")
+		print(f"\t{i+1}){item}")"""
+print("\nStarting custom CLI. NOTE: Type 'help' for more info")
 
 
 while True:
@@ -23,55 +24,58 @@ while True:
                 print("\nERROR: No function entered")
                 continue
 
-        if command_func not in MENU_ITEMS:
+        if command_func not in commands:
                 print("\nERROR! No such command please try again")
         else:
-                if command_func == "Create":                        
+                if command_func == "create":                        
                         create(command_full)
 				
-                elif command_func == "MkDir":                        
+                elif command_func == "mkdir":                        
                         mkDir(command_full)
 
-                elif command_func == "Delete":                        
+                elif command_func == "delete":                        
                         delete(command_full)
 
-                elif command_func == "ChDir":                       
+                elif command_func == "cd":                       
                         current_path = chDir(command_full)
 
-                elif command_func == "Open":
+                elif command_func == "open":
                         Open(command_full)
 
-                elif command_func == "Close":
+                elif command_func == "close":
                         close(command_full)
 
-                elif command_func == "Read":
+                elif command_func == "read":
                         read()
 
-                elif command_func == "ReadFrom":
+                elif command_func == "readfrom":
                         readFrom(command_full)
 
-                elif command_func == "Append":
+                elif command_func == "append":
                         append()
 
-                elif command_func == "Write":
+                elif command_func == "write":
                         write()
 
                 elif command_func == "WriteAt":
                         writeAt(command_full)
                         
-                elif command_func == "Truncate":
+                elif command_func == "truncate":
                         truncate(command_full)
 
-                elif command_func == "MoveText":
+                elif command_func == "movetext":
                         move_within_file(command_full)
                         
-                elif command_func == "ShowMap":
+                elif command_func == "showmap":
                         showMap()
 
-                elif command_func == "Move":
-                        move(command_full)         
+                elif command_func == "move":
+                        move(command_full)
 
-                elif command_func == "Exit":
+                elif command_func == "help":
+                        help()     
+
+                elif command_func == "exit":
                         print("\nQuitting")
                         break
 

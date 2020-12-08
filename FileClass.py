@@ -289,10 +289,12 @@ class CustomFile:
 			return
 
 
-		self.mode = 'r'
+		self.mode = "m"
 
 		# reading the text from file
+		self.mode = "r"
 		text = self.read()
+		self.mode = "m"
 		size_of_file = len(text)
 
 

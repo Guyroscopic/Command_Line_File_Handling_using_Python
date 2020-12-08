@@ -39,7 +39,7 @@ def create(command_full):
                     print(f"File '{file_path}.txt' created")
 
         except IndexError as ie:
-                print("\nERROR: No File name or path specified, usage: 'Create <filePath>'")
+                print("\nERROR: No File name or path specified, usage: 'create <filePath>'")
 
 
 def delete(command_full):
@@ -63,6 +63,11 @@ def delete(command_full):
                         print(f"'{file_path}' is not a file")
 
                     else:
+
+                        if current_file.file_dict == hierarchy:
+                            print(f"ERROR: File {hierarchy}.txt is opened, close before deleting using 'close' command")
+                            return
+
                         hierarchy.pop(file_to_delete)
 
                         with open("structure.json", "w") as f:
@@ -75,7 +80,7 @@ def delete(command_full):
                     print(f"File {file_path}.txt does not exist")
 
         except IndexError as ie:
-                print("\nERROR: No Directory name or path specified, usage: 'Delete <filePath>'")
+                print("\nERROR: No Directory name or path specified, usage: 'delete <filePath>'")
 
 
 def mkDir(command_full):
@@ -109,7 +114,7 @@ def mkDir(command_full):
                 print(f"Directory '{dir_path}' Created")
 
     except IndexError as ie:
-        print("\nERROR: No Directory name or path specified, usage: 'MkDir <directoryPath>'")
+        print("\nERROR: No Directory name or path specified, usage: 'mkdir <directoryPath>'")
        
 
 def chDir(command_full):
@@ -153,7 +158,7 @@ def chDir(command_full):
 
     #Dispaying Error msg incase of incorrect use of command line
     except IndexError as ie:
-        print("\nERROR: No Directory name or path specified, usage: 'ChDir <directoryPath>'")
+        print("\nERROR: No Directory name or path specified, usage: 'cd <directoryPath>'")
 
 
 def showMap():
@@ -196,12 +201,8 @@ def move(command_full):
         trgt_file_obj = CustomFile(trgt_filename, trgt_hierarchy, "w") ###Either w or a
         trgt_file_obj.write(src_data)
 
-        print(src_file_obj)
-        print(trgt_file_obj)
-
-
     except IndexError as ie:
-        print("\nERROR: No Directory name or path specified, usage: 'ChDir <directoryPath>'")    
+        print("\nERROR: No Directory name or path specified, usage: 'cd <directoryPath>'")    
 
 
 ######################    Functions that operate on/modify File Data    ######################
@@ -211,15 +212,15 @@ def Open(command_full):
     global current_file
 
     if current_file:
-        print(f"ERROR: A file {current_file.name}.txt is already opened, Please close it using the 'Close' command before opening another")
+        print(f"ERROR: A file {current_file.name}.txt is already opened, Please close it using the 'close' command before opening another")
         return
 
     try:
         file_path      = command_full.split()[1]
         file_mode      = command_full.split()[2]
 
-        if file_mode not in ["r", "rf", "t", "a", "w"]:
-            print(f"ERROR: Invalid mode, Please chose a mode from: 'r', 't', 'a', 'w'")
+        if file_mode not in ["r", "m", "t", "a", "w"]:
+            print(f"ERROR: Invalid mode, Please chose a mode from: 'r', 't', 'a', 'w', 'm'")
             return
 
         file_path      = getAbsPathfromRelPath(file_path)
@@ -243,7 +244,7 @@ def Open(command_full):
                
 
     except IndexError as ie:
-        print("\nERROR: Invalid use of Open command, usage: 'Open <filename> <mode>'")
+        print("\nERROR: Invalid use of Open command, usage: 'open <filename> <mode>'")
 
 
 def close(command_full):
@@ -258,7 +259,7 @@ def close(command_full):
     global current_file
 
     if not current_file:
-        print(f"ERROR: No file is opened, Please open a file using 'Open <filename> <mode>' before using 'Close' command")
+        print(f"ERROR: No file is opened, Please open a file using 'open <filename> <mode>' before using 'close' command")
         return
     
     print(f"{current_file.name}.txt succesfully Closed")
@@ -270,7 +271,7 @@ def read():
     global current_file
 
     if not current_file:
-        print(f"ERROR: No file is opened, Please open a file using 'Open <filename> <mode>' before using 'Read' command")
+        print(f"ERROR: No file is opened, Please open a file using 'open <filename> <mode>' before using 'read' command")
         return
 
     read_data = current_file.read()
@@ -288,7 +289,7 @@ def readFrom(command_full):
         size        = int(command_full.split()[2])
 
         if not current_file:
-            print(f"ERROR: No file is opened, Please open a file using 'Open <filename> <mode> before using 'ReadFrom' command")
+            print(f"ERROR: No file is opened, Please open a file using 'open <filename> <mode> before using 'readfrom' command")
             return
 
         # perform read operation
@@ -298,18 +299,18 @@ def readFrom(command_full):
             print(read_data)
 
     except IndexError as e:
-        print("\nERROR: Invalid use of ReadFrom command, usage: 'ReadFrom <index> <size>'")
+        print("\nERROR: Invalid use of ReadFrom command, usage: 'readfrom <index> <size>'")
 
 
 
 def append():
 
     if not current_file:
-        print(f"ERROR: No file is opened, Please open a file using 'Open <filename> <mode> before using 'Append' command")
+        print(f"ERROR: No file is opened, Please open a file using 'open <filename> <mode> before using 'append' command")
         return
 
     try:
-        text_to_append = input("\nEnter text to append : \n")
+        text_to_append = input("\nEnter text to append : ")
         # append text to file
         current_file.append(text_to_append, data)
         
@@ -318,13 +319,13 @@ def append():
             json.dump(structure, f)
 
     except IndexError as ie:
-        print("\nERROR: Invalid use of Append command, usage: 'Append'")
+        print("\nERROR: Invalid use of append command, usage: 'append'")
 
 
 def truncate(command_full):
 
     if not current_file:
-        print(f"ERROR: No file is opened, Please open a file using 'Open <filename> <mode> before using 'ReadFrom' command")
+        print(f"ERROR: No file is opened, Please open a file using 'open <filename> <mode> before using 'truncate' command")
         return
 
     try:
@@ -337,17 +338,17 @@ def truncate(command_full):
             json.dump(structure, f)
 
     except IndexError as ie:
-        print("\nERROR: Invalid use of Truncate command, usage: 'Truncate <size>'")
+        print("\nERROR: Invalid use of aruncate command, usage: 'truncate <size>'")
 
 
 
 def write():
 
     if not current_file:
-        print(f"ERROR: No file is opened, Please open a file using 'Open <filename> <mode> before using 'Write' command")
+        print(f"ERROR: No file is opened, Please open a file using 'open <filename> <mode> before using 'write' command")
         return
 
-    text = input("Text : \n")
+    text = input("Text: ")
     current_file.write(text)
 
     #Updating the File Structure and Data Storage in Non-Volatile memory
@@ -358,13 +359,13 @@ def write():
 def writeAt(command_full):
 
     if not current_file:
-        print(f"ERROR: No file is opened, Please open a file using 'Open <filename> <mode> before using 'Write' command")
+        print(f"ERROR: No file is opened, Please open a file using 'open <filename> <mode> before using 'writeat' command")
         return
 
     try:
         index = int(command_full.split()[1])
 
-        text = input("\nText : \n")
+        text = input("\nText : ")
         current_file.writeAt(data, text, index)
         #print(len(data["0"]))
 
@@ -373,16 +374,14 @@ def writeAt(command_full):
             json.dump(structure, f)
 
     except IndexError as ie:
-        print("\nERROR: Invalid use of WriteAt command, usage: 'Truncate <index>'")
+        print("\nERROR: Invalid use of writeat command, usage: 'writeat <index>'")
 
 
 
-def move_within_file(command_full):
-
-    
+def move_within_file(command_full):    
 
     if not current_file:
-        print(f"ERROR: No file is opened, Please open a file using 'Open <filename> <mode> before using 'Move' command")
+        print(f"ERROR: No file is opened, Please open a file using 'open <filename> <mode> before using 'move' command")
         return
 
     try:
@@ -398,10 +397,30 @@ def move_within_file(command_full):
             json.dump(structure, f)
 
     except IndexError as ie:
-        print("\nERROR: Invalid use of MoveWithin command, usage: 'MoveText <from> <to> <size>'")
+        print("\nERROR: Invalid use of movetext command, usage: 'movetext <from> <to> <size>'")
 
 
 ######################    Utility Functions    ###############################################
+
+
+def help():
+    print("mkdir:"    + "\t\t" + "Used to create a directory. Usage: mkdir <directoryPath>\n"                                              + 
+          "cd:"       + "\t\t" + "Used to change the  current directory. Usage: cd <directoryPath>\n"                                      +
+          "create:"   + "\t\t" + "Used to create a file. Usage: create <filepath+fileName>\n"                                              +
+          "delete:"   + "\t\t" + "Used to delete a file. Usage: delete <filepath+filename>\n"                                              +
+          "showmap:"  + "\t" + "Used to print the map of directories from current directory. Usage: showmap\n"                           +
+          "move:"     + "\t\t" + "Used to copy content of a file to another. Usage: move <srcFilePath+filenmae> <trgtFilePath+filename>\n" +
+          "open:"     + "\t\t" + "Used to open a file to perform operations. Usage: open <filePath+filename> <mode>\n"                     +
+          "close:"    + "\t\t" + "Used  to close an opened file. Usage: close\n"                                                           +
+          "read:"     + "\t\t" + "Used to read data from an opened file. Usage: read\n"                                                    +
+          "readfrom:" + "\t" + "Used to read data from an opened file at given index. Usage: readfrom <index> <size>\n"                  +
+          "truncate:" + "\t" + "Used to delete data from an opened file onwards from a given index. Usage: truncate <size>\n"            +
+          "append:"   + "\t\t" + "Used to appened data to an opened file. Usage: appened\n"                                                +
+          "write:"    + "\t\t" + "Used to write to an opened file. Usage: write\n"                                                         +
+          "writeat:"  + "\t" + "Used to write to an opened file at given index. Usage: writeat <index>\n"                                +
+          "movetext:" + "\t" + "Used to move text within a file. Usage: movetext <from> <to> <size>"                                   
+         )
+
 
 def checkHierarchy(path):
 
