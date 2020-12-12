@@ -64,9 +64,9 @@ def delete(command_full):
 
                     else:
 
-                        if current_file.file_dict == hierarchy:
-                            print(f"ERROR: File {hierarchy}.txt is opened, close before deleting using 'close' command")
-                            return
+                        #if current_file.file_dict == hierarchy:
+                        #    print(f"ERROR: File {hierarchy}.txt is opened, close before deleting using 'close' command")
+                        #    return
 
                         hierarchy.pop(file_to_delete)
 
@@ -408,17 +408,17 @@ def help():
           "cd:"       + "\t\t" + "Used to change the  current directory. Usage: cd <directoryPath>\n"                                      +
           "create:"   + "\t\t" + "Used to create a file. Usage: create <filepath+fileName>\n"                                              +
           "delete:"   + "\t\t" + "Used to delete a file. Usage: delete <filepath+filename>\n"                                              +
-          "showmap:"  + "\t" + "Used to print the map of directories from current directory. Usage: showmap\n"                           +
+          "showmap:"  + "\t"   + "Used to print the map of directories from current directory. Usage: showmap\n"                           +
           "move:"     + "\t\t" + "Used to copy content of a file to another. Usage: move <srcFilePath+filenmae> <trgtFilePath+filename>\n" +
           "open:"     + "\t\t" + "Used to open a file to perform operations. Usage: open <filePath+filename> <mode>\n"                     +
-          "close:"    + "\t\t" + "Used  to close an opened file. Usage: close\n"                                                           +
+          "close:"    + "\t\t" + "Used to close an opened file. Usage: close\n"                                                           +
           "read:"     + "\t\t" + "Used to read data from an opened file. Usage: read\n"                                                    +
-          "readfrom:" + "\t" + "Used to read data from an opened file at given index. Usage: readfrom <index> <size>\n"                  +
-          "truncate:" + "\t" + "Used to delete data from an opened file onwards from a given index. Usage: truncate <size>\n"            +
+          "readfrom:" + "\t"   + "Used to read data from an opened file at given index. Usage: readfrom <index> <size>\n"                  +
+          "truncate:" + "\t"   + "Used to delete data from an opened file onwards from a given index. Usage: truncate <size>\n"            +
           "append:"   + "\t\t" + "Used to appened data to an opened file. Usage: appened\n"                                                +
           "write:"    + "\t\t" + "Used to write to an opened file. Usage: write\n"                                                         +
-          "writeat:"  + "\t" + "Used to write to an opened file at given index. Usage: writeat <index>\n"                                +
-          "movetext:" + "\t" + "Used to move text within a file. Usage: movetext <from> <to> <size>"                                   
+          "writeat:"  + "\t"   + "Used to write to an opened file at given index. Usage: writeat <index>\n"                                +
+          "movetext:" + "\t"   + "Used to move text within a file. Usage: movetext <from> <to> <size>"                                   
          )
 
 
