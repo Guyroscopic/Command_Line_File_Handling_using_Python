@@ -11,7 +11,7 @@ with open("users.json", "r") as f:
 
 id1, password1 = 1, "12345"
 id2, password2 = 2, "123"
-
+therad_user_passwords = ["12345", "12345"]
 
 def authenticate_user(id, password):
 
@@ -29,9 +29,30 @@ def authenticate_user(id, password):
 		return
 
 
+
+def thread_routine(id):
+
+	password = therad_user_passwords[id-1]
+
+	user = authenticate_user(id, password)
+
+	print(f"User {user.id} has logged in")
+	time.sleep(0.1)
+	print(f"User {user.id} loggin out")
+
+
+
+thread1 = threading.Thread(target=thread_routine, args=(1,))
+thread2 = threading.Thread(target=thread_routine, args=(2,))
+
+thread1.start()
+thread2.start()
+
+"""
 user1 = authenticate_user(id1, password1)
 user2 = authenticate_user(id2, password2)
 
 
 print(user1)
-print(user2)
+print(user2)"""
+
