@@ -1,8 +1,8 @@
 import logging
 import threading
 import time
-from user import *
-import json
+#import json
+from custom_os_utils import *
 
 
 with open("users.json", "r") as f:
@@ -36,9 +36,9 @@ def thread_routine(id):
 
 	user = authenticate_user(id, password)
 
-	print(f"User {user.id} has logged in")
+	print(f"{user} logged IN")
 	time.sleep(0.1)
-	print(f"User {user.id} loggin out")
+	print(f"{user} logged OUT")
 
 
 
