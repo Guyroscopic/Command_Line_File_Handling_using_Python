@@ -4,7 +4,7 @@ import time
 from queue import Queue
 from user import *
 import json
-
+from run import *
 
 with open("users.json", "r") as f:
 	users_data = json.load(f)
@@ -37,20 +37,20 @@ def thread_routine(id):
 
 	user = authenticate_user(id, password)
 
-	print(f"User {user.id} has logged in")
+	print(f"{user} logged IN")
 	time.sleep(0.1)
 
-	#reading commands from command file
-	print(f"User {user.id} is going to perform some tasks")
+	#reading commands
 	command_q = read_command(user.id)
 
 	print(f"Executing Commands for {user.id}")
 	if command_q:
-		execute_command(command_q)
+		handle_commands(user, command_q)
 	else:
 		pass
 
-	print(f"User {user.id} loggin out")
+	print(f"{user} logged OUT")
+
 
 
 #function to read commands and push them into the queue
@@ -59,31 +59,13 @@ def read_command(id):
 	commands_file = "user" + str(id) + "_commands.txt"
 	try:
 		with open(commands_file, "r") as f:
-			commands = f.readlines()
+			user_commands = f.readlines()
 
-		number_of_commands = len(commands)
-
-		#adding commands to the queue
-		command_q = Queue(number_of_commands)
-		for command in commands:
-			command_q.put(command)
-
-		return command_q
-			
-		print("")
+		return user_commands
 
 	except Exception as FileNotFoundError:
-		print(f"User {id} does not have privilage to run commands")
+		print(f"No commands found")
 		return
-
-
-def execute_command(queue):
-
-	print("Executing Commands")
-	#get commands from queue and execute 
-	for i in range(queue.qsize()):
-		print(queue.get())
-
 
 
 

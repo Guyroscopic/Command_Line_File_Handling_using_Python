@@ -1,3 +1,2 @@
-open pop/abc r
-read
-close
+cd pop
+exit

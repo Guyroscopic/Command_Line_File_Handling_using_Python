@@ -1,7 +1,8 @@
 from FileClass import *
+from user import *
 
-ROOT_PATH  = ""
-current_path = ROOT_PATH
+#ROOT_PATH  = ""
+#current_path = ROOT_PATH
 current_file = None
 
 #print(len(data["0"]))
@@ -117,7 +118,7 @@ def mkDir(command_full):
         print("\nERROR: No Directory name or path specified, usage: 'mkdir <directoryPath>'")
        
 
-def chDir(command_full):
+def chDir(command_full, user):
 
     global current_path
         
@@ -125,19 +126,19 @@ def chDir(command_full):
         dir_path = command_full.split()[1]
 
         if dir_path == "..":
-            dir_path = getParent(current_path)
+            dir_path = getParent(user.current_path)
         else:
             dir_path = getAbsPathfromRelPath(dir_path)
 
         
         #Logic For moving upward in the File Structure to root
         if dir_path == ROOT_PATH:            
-            if current_path == ROOT_PATH:
+            if user.current_path == ROOT_PATH:
                 print(f"Already in root")
                 return
             else:
 
-                current_path = ROOT_PATH
+                user.current_path = ROOT_PATH
                 print(f"Setting current path to root")
                 return
 
@@ -154,7 +155,7 @@ def chDir(command_full):
 
             else:
                 print(f"Setting current path to '{dir_path}'")
-                current_path = dir_path 
+                user.current_path = dir_path 
 
     #Dispaying Error msg incase of incorrect use of command line
     except IndexError as ie:
