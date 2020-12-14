@@ -2,7 +2,7 @@ from FileClass import *
 from user import *
 
 #ROOT_PATH  = ""
-#current_path = ROOT_PATH
+current_path = ROOT_PATH
 current_file = None
 
 #print(len(data["0"]))
@@ -120,7 +120,7 @@ def mkDir(command_full):
 
 def chDir(command_full, user):
 
-    global current_path
+    #global current_path
         
     try:
         dir_path = command_full.split()[1]
