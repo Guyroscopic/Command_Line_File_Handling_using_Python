@@ -1,55 +1,60 @@
 from custom_os_utils import *
-
+import threading
 commands = ["create", "delete", "mkdir", "move", "movetext", "cd", "open", "close", "showmap", "read", "readfrom", "append", "write", "writeat", "truncate", "exit", "help"]
 
+lock = threading.Lock()
 
-"""for i, item in enumerate(MENU_ITEMS):
+for i, item in enumerate(commands):
 	if i == 0:
 		print(f"Chose a Command:\n\t{i+1}){item}")
 	else:
-		print(f"\t{i+1}){item}")"""
+		print(f"\t{i+1}){item}")
 print("\nStarting custom CLI. NOTE: Type 'help' for more info")
 
 
-while True:
-        from custom_os_utils import current_path
-        if current_path == ROOT_PATH:
-                command_full = input(f"\nroot {SPECIAL_CHAR} ")
-        else:
-                command_full = input(f"\nroot/{current_path} {SPECIAL_CHAR} ")
+def handle_commands(user_command, user):
 
+
+        #from custom_os_utils import current_path
+        """if user.current_path == ROOT_PATH:
+                command_full = print("\nroot" + SPECIAL_CHAR + user_command)
+        else:
+                command_full = print("\nroot/" + user.current_path + SPECIAL_CHAR + user_command)"""
         try:
-                command_func = command_full.split()[0]
+                command_func = user_command.split()[0]
         except IndexError as ie:
                 print("\nERROR: No function entered")
-                continue
+                
 
         if command_func not in commands:
                 print("\nERROR! No such command please try again")
         else:
-                if command_func == "create":                        
-                        create(command_full)
+                if command_func == "create": 
+                        with lock:
+                                create(user_command)
 				
-                elif command_func == "mkdir":                        
-                        mkDir(command_full)
-
-                elif command_func == "delete":                        
-                        delete(command_full)
+                elif command_func == "mkdir":
+                        with lock:
+                                mkDir(user_command)                       
+                        
+                elif command_func == "delete":
+                        with lock:
+                                delete(user_command)
 
                 elif command_func == "cd":                       
-                        current_path = chDir(command_full)
+                        user.current_path = chDir(user_command, user)
 
                 elif command_func == "open":
-                        Open(command_full)
+                        Open(user_command)
 
                 elif command_func == "close":
-                        close(command_full)
+                        close(user_command)
 
                 elif command_func == "read":
                         read()
 
                 elif command_func == "readfrom":
-                        readFrom(command_full)
+                        readFrom(user_command)
 
                 elif command_func == "append":
                         append()
@@ -57,26 +62,25 @@ while True:
                 elif command_func == "write":
                         write()
 
-                elif command_func == "writeat":
-                        writeAt(command_full)
+                elif command_func == "WriteAt":
+                        writeAt(user_command)
                         
                 elif command_func == "truncate":
-                        truncate(command_full)
+                        truncate(user_command)
 
                 elif command_func == "movetext":
-                        move_within_file(command_full)
+                        move_within_file(user_command)
                         
                 elif command_func == "showmap":
                         showMap()
 
                 elif command_func == "move":
-                        move(command_full)
+                        move(user_command)
 
                 elif command_func == "help":
                         help()     
 
                 elif command_func == "exit":
                         print("\nQuitting")
-                        break
 
 

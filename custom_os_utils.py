@@ -5,6 +5,7 @@ from user import *
 current_path = ROOT_PATH
 current_file = None
 
+
 #print(len(data["0"]))
 
 ######################      Function that operate on/modify File structure    ################
@@ -120,7 +121,7 @@ def mkDir(command_full):
 
 def chDir(command_full, user):
 
-    #global current_path
+    global current_path
         
     try:
         dir_path = command_full.split()[1]
@@ -208,7 +209,7 @@ def move(command_full):
 
 ######################    Functions that operate on/modify File Data    ######################
 
-def Open(command_full):
+def Open(command_full, user):
     
     global current_file
 
