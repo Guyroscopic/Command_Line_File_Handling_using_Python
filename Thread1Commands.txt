@@ -1,0 +1,2 @@
+cd pop/mno
+delete thread2File
