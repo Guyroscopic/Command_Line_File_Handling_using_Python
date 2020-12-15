@@ -2,7 +2,6 @@ from custom_os_utils import *
 import threading
 commands = ["create", "delete", "mkdir", "move", "movetext", "cd", "open", "close", "showmap", "read", "readfrom", "append", "write", "writeat", "truncate", "exit", "help"]
 
-lock = threading.Lock()
 
 for i, item in enumerate(commands):
 	if i == 0:
@@ -30,16 +29,13 @@ def handle_commands(user_command, user):
                 print("\nERROR! No such command please try again")
         else:
                 if command_func == "create": 
-                        with lock:
-                                create(user_command)
+                        create(user_command)
 				
                 elif command_func == "mkdir":
-                        with lock:
-                                mkDir(user_command)                       
+                        mkDir(user_command)                       
                         
                 elif command_func == "delete":
-                        with lock:
-                                delete(user_command)
+                        delete(user_command)
 
                 elif command_func == "cd":                       
                         user.current_path = chDir(user_command, user)

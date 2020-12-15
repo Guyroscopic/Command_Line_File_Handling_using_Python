@@ -42,13 +42,13 @@ def thread_routine(id):
 
 	print(f"{user} logged IN")
 
-	handle_commands(commands_full[id][0], user)
-	handle_commands(commands_full[id][1], user)
+	#handle_commands(commands_full[id][0], user)
+	#handle_commands(commands_full[id][1], user)
 
-	#chDir(commands_full[id][0], user)
+	chDir(commands_full[id][0], user)
 
-	#with lock:
-	#	create(commands_full[id][1])
+	with lock:
+		create(commands_full[id][1])
 
 	print(f"Current  Path of {user}:", user.current_path)
 	
