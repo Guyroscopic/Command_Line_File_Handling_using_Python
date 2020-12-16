@@ -14,6 +14,9 @@ class User:
 	def __repr__(self):
 		return f"User: {self.username} with ID {self.id}"
 
+	def getCurrentFileNames(self):
+		return [file.name for  file in self.current_files]
+
 
 
 

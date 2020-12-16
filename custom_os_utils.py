@@ -10,11 +10,11 @@ current_file = None
 
 ######################      Function that operate on/modify File structure    ################
 
-def create(command_full):
+def create(command_full, user):
         
         try:
             file_path      = command_full.split()[1]
-            file_path      = getAbsPathfromRelPath(file_path)
+            file_path      = getAbsPathfromRelPath(file_path, user)
            
             file_to_create = file_path.split("/")[-1]
             parent_dir     = file_path.split("/")[:-1]
@@ -38,17 +38,17 @@ def create(command_full):
                     with open("structure.json", "w") as f:
                         json.dump(structure, f)
 
-                    print(f"File '{file_path}.txt' created")
+                    print(f"File '{file_path}.txt' created by {user}")
 
         except IndexError as ie:
                 print("\nERROR: No File name or path specified, usage: 'create <filePath>'")
 
 
-def delete(command_full):
+def delete(command_full, user):
 
         try:
             file_path      = command_full.split()[1]
-            file_path      = getAbsPathfromRelPath(file_path)
+            file_path      = getAbsPathfromRelPath(file_path, user)
             file_to_delete = file_path.split("/")[-1]
             parent_dir     = file_path.split("/")[:-1]
             hierarchy      = checkHierarchy(parent_dir)
@@ -75,7 +75,7 @@ def delete(command_full):
                         with open("structure.json", "w") as f:
                             json.dump(structure, f)
 
-                        print(f"File '{file_path}.txt' DELETED")
+                        print(f"File '{file_path}.txt' deleted by {user}")
 
                 except KeyError as ke:
                     #If the file does not Exist
@@ -85,11 +85,11 @@ def delete(command_full):
                 print("\nERROR: No Directory name or path specified, usage: 'delete <filePath>'")
 
 
-def mkDir(command_full):
+def mkDir(command_full, user):
        
     try:
         dir_path = command_full.split()[1]
-        dir_path = getAbsPathfromRelPath(dir_path)
+        dir_path = getAbsPathfromRelPath(dir_path, user)
         
         dir_to_create = dir_path.split("/")[-1]
         parent_dir = dir_path.split("/")[:-1]
@@ -129,7 +129,7 @@ def chDir(command_full, user):
         if dir_path == "..":
             dir_path = getParent(user.current_path)
         else:
-            dir_path = getAbsPathfromRelPath(dir_path)
+            dir_path = getAbsPathfromRelPath(dir_path, user)
 
         
         #Logic For moving upward in the File Structure to root
@@ -155,7 +155,7 @@ def chDir(command_full, user):
                 print(f"ERROR: {dir_path} is not a directory")
 
             else:
-                print(f"Setting current path to '{dir_path}'")
+                print(f"Setting current path to '{dir_path}' for {user}")
                 user.current_path = dir_path 
 
     #Dispaying Error msg incase of incorrect use of command line
@@ -163,23 +163,25 @@ def chDir(command_full, user):
         print("\nERROR: No Directory name or path specified, usage: 'cd <directoryPath>'")
 
 
-def showMap():
+def showMap(user):
 
-    global current_path
+    #global current_path
     
-    current_dict = getDictFromPath(current_path)
+    current_dict = getDictFromPath(user.current_path)
+    print("===================START OF MAP======================")
     prettyPrint(current_dict, 1)
+    print("===================END OF MAP========================")
 
 
-def move(command_full):
+def move(command_full, user):
 
     try:
         src_file_path  = command_full.split()[1]
-        src_file_path = getAbsPathfromRelPath(src_file_path)
+        src_file_path = getAbsPathfromRelPath(src_file_path, user)
         src_filename   = src_file_path.split("/")[-1]
 
         trgt_file_path = command_full.split()[2]
-        trgt_file_path = getAbsPathfromRelPath(trgt_file_path)
+        trgt_file_path = getAbsPathfromRelPath(trgt_file_path, user)
         trgt_filename  = trgt_file_path.split("/")[-1]
 
         #print(src_file_path, trgt_file_path)
@@ -212,7 +214,6 @@ def move(command_full):
 def Open(command_full, user):
     
     #global current_file
-
     #if current_file:
     #    print(f"ERROR: A file {current_file.name}.txt is already opened, Please close it using the 'close' command before opening another")
     #    return
@@ -262,7 +263,7 @@ def close(command_full, user):
     #global current_file
 
     #Check if user has no files opened
-    if not len(user.current_files):
+    if len(user.current_files) == 0:
         print(f"ERROR: No file is opened, Please open a file using 'open <filename> <mode>' before using 'close' command")
         return
 
@@ -270,14 +271,14 @@ def close(command_full, user):
         file_to_close = command_full.split()[1]
 
         #Checking if the file is opened for the current user
-        opened_file_names = [file.name for  file in user.current_files]
+        user_opened_file_names = user.getCurrentFileNames()
 
-        if file_to_close not in opened_file_names:
+        if file_to_close not in user_opened_file_names:
             print(f"ERROR: No file {file_to_close} opened for {user}")
             return
     
         #Closing the file for  user
-        print(f"{current_file.name}.txt succesfully Closed for {user}")
+        print(f"{file_to_close}.txt succesfully Closed for {user}")
         for file in user.current_files:
             if file.name == file_to_close:
                 user.current_files.remove(file)
@@ -289,40 +290,64 @@ def close(command_full, user):
         print("\nERROR: Invalid use of close command, usage: 'close <filename>'")
 
 
-def read():
+def read(command_full, user):
 
-    global current_file
+    #global current_file
 
-    if not current_file:
+    if len(user.current_files) == 0:
         print(f"ERROR: No file is opened, Please open a file using 'open <filename> <mode>' before using 'read' command")
         return
 
-    read_data = current_file.read()
-    if read_data:
-        print(read_data)
+    try:
+        file_to_read_name = command_full.split()[1]
+
+        #Checking if the file is opened for the current user, if opened, reading it
+        for file in user.current_files:
+            if file.name == file_to_read_name:
+                read_data = file.read()
+                break
+        else:
+            print(f"ERROR: No file {file_to_read_name}.txt opened for {user}")
+            return            
+
+        
+        if read_data:
+            print(f"Contents of {file_to_read_name}.txt:")
+            print(read_data)
+
+    except IndexError as ie:
+        print("ERROR: Invalid use of read command. Usage read <filename>")
 
 
-def readFrom(command_full):
+def readFrom(command_full, user):
 
-    global current_file
+    #global current_file
 
     try:
 
-        start_index = int(command_full.split()[1])
-        size        = int(command_full.split()[2])
+        file_to_read_name = command_full.split()[1]
+        start_index       = int(command_full.split()[2])
+        size              = int(command_full.split()[3])
 
-        if not current_file:
-            print(f"ERROR: No file is opened, Please open a file using 'open <filename> <mode> before using 'readfrom' command")
+        if len(user.current_files) == 0:
+            print(f"ERROR: No file is opened, Please open a file using 'open <filename> <mode>' before using 'readfrom' command")
             return
 
-        # perform read operation
-        read_data = current_file.readFrom(data, start_index, size)
+        #Checking if the file is opened for the current user, if opened, reading it
+        for file in user.current_files:
+            if file.name == file_to_read_name:
+                read_data = file.readFrom(data, start_index, size)
+                break
+        else:
+            print(f"ERROR: No file {file_to_read}.txt opened for {user}")
+            return        
 
         if read_data:
+            print(f"Contents of {file_to_read_name}.txt:")
             print(read_data)
 
     except IndexError as e:
-        print("\nERROR: Invalid use of ReadFrom command, usage: 'readfrom <index> <size>'")
+        print("\nERROR: Invalid use of ReadFrom command, usage: 'readfrom <filename> <index> <size>'")
 
 
 

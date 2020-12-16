@@ -27,78 +27,77 @@ def thread_routine(id):
 
 	#Getting Thread commands
 	thread_commands_full = getThreadCommandfromId(id)
-	
+
+	for i in range(len(thread_commands_full)):
+		if thread_commands_full[i][-1] == "\n":
+			thread_commands_full[i] = thread_commands_full[i][:-1]
+
+
 	#Iterating Over thread commands
 	for command_full in thread_commands_full:
 
-		command_func = command_full.split()[0]		
+		command_func = command_full.split()[0]
+		#print("Command Full:", command_full)
+		#print("Command Fucntion:", command_func, len(command_func))		
 
 		#If the command is critical
 		if isCritical(command_full):
 
-			#If the Ciritical command requires a reader lock
-			if isRead(command_full):
-				##PERFORM READ
+			with simple_lock:
+
 				if command_func == "read":
-					read()
-				else:
-					readFrom(command_full)
+					read(command_full, user)
+					
+				elif command_func == "readfrom":
+					readFrom(command_full, user)
+		      
+				elif command_func == "append":
+					append()
 
-            #If the Ciritical command requires a writer lock
-			elif isWrite(command_full):
-				#PERFORM WRITE
-				if command_func == "append":
-                    append()
+				elif command_func == "write":
+					write()
 
-                elif command_func == "write":
-                    write()
+				elif command_func == "writeat":
+					writeAt(command_full)
 
-                elif command_func == "writeat":
-                    writeAt(command_full)
-                        
-                elif command_func == "truncate":
-                    truncate(command_full)
+				elif command_func == "truncate":
+					truncate(command_full)
 
-                elif command_func == "movetext":
-                    move_within_file(command_full)
+				elif command_func == "movetext":
+					move_within_file(command_full)				
+					
+				elif command_func == "create":
+					create(command_full, user)
 
-            #If the Ciritical command requires a simple lock
-			else:
-				with simple_lock:
-					## PERFORM OTHER FUCNTIONS
-					if command_func == "create":                        
-                        create(command_full)
-				
-	                elif command_func == "mkdir":                        
-	                    mkDir(command_full)
+				elif command_func == "mkdir":
+					mkDir(command_full, user)
 
-	                elif command_func == "delete":                        
-	                    delete(command_full)
+				elif command_func == "delete":
+					delete(command_full, user)
 
-	                elif command_func == "move":
-                        move(command_full)                
+				elif command_func == "move":
+					move(command_full, user)
+
+				elif command_func == "showmap":
+					showMap(user)               
 
 	    #If the command is not critical
 		else:
 			##PERFORM NON_CRITICAL OPERATIONS
-			if command_func == "cd":                       
-                chDir(command_full)
+			if command_func == "cd":
+				chDir(command_full, user)			
 
-            elif command_func == "showmap":
-                showMap()
+			elif command_func == "help":
+				help()
 
-            elif command_func == "help":
-                help()  
+			elif command_func == "open":
+				Open(command_full, user)
 
-            elif command_func == "open":
-                Open(command_full , user)
+			elif command_func == "close":
+				close(command_full, user)
 
-            elif command_func == "close":
-                close(command_full, user)   
-
-                
 	print(f"{user} logged OUT")
-
+	
 
 
 thread1 = threading.Thread(target=thread_routine, args=(0,))

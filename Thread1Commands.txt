@@ -1,3 +1,2 @@
-cd demoDir
-open demofile r
-close demofile
+open testfile r
+read testfile
