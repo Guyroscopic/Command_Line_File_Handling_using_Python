@@ -63,9 +63,10 @@ def read_command(id):
 
 		return user_commands
 
-	except Exception as FileNotFoundError:
+	except FileNotFoundError as fnfe:
 		print(f"No commands found")
 		return
+
 
 
 
