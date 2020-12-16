@@ -5,6 +5,7 @@ from user import *
 current_path = ROOT_PATH
 current_file = None
 
+
 #print(len(data["0"]))
 
 ######################      Function that operate on/modify File structure    ################
@@ -120,7 +121,7 @@ def mkDir(command_full):
 
 def chDir(command_full, user):
 
-    #global current_path
+    global current_path
         
     try:
         dir_path = command_full.split()[1]
@@ -208,13 +209,13 @@ def move(command_full):
 
 ######################    Functions that operate on/modify File Data    ######################
 
-def Open(command_full):
+def Open(command_full, user):
     
-    global current_file
+    #global current_file
 
-    if current_file:
-        print(f"ERROR: A file {current_file.name}.txt is already opened, Please close it using the 'close' command before opening another")
-        return
+    #if current_file:
+    #    print(f"ERROR: A file {current_file.name}.txt is already opened, Please close it using the 'close' command before opening another")
+    #    return
 
     try:
         file_path      = command_full.split()[1]
@@ -224,31 +225,32 @@ def Open(command_full):
             print(f"ERROR: Invalid mode, Please chose a mode from: 'r', 't', 'a', 'w', 'm'")
             return
 
-        file_path      = getAbsPathfromRelPath(file_path)
+        file_path   = getAbsPathfromRelPath(file_path, user)
         
         file_name   = file_path.split("/")[-1]
 
         #hierarchy is the required file json object
-        hierarchy      = checkHierarchy(file_path.split("/"))
+        hierarchy   = checkHierarchy(file_path.split("/"))
 
         if type(hierarchy) == str:
-            print(f"File '{file_path}'.txt does not exist")
+            print(f"File '{file_path}'.txt does not exist ({user})")
 
         else:
 
             if hierarchy["type"] != "file":
-                print(f"'{file_path}' is not a file")
+                print(f"'{file_path}' is not a file ({user})")
 
             else:
-                current_file = CustomFile(file_name, hierarchy, file_mode)   
-                print(f"'{file_path}.txt' succesfully Opened in '{file_mode}' mode")   
+                file = CustomFile(file_name, hierarchy, file_mode)
+                user.current_files.append(file)
+                print(f"'{file_path}.txt' succesfully Opened in '{file_mode}' mode for {user}")   
                
 
     except IndexError as ie:
-        print("\nERROR: Invalid use of Open command, usage: 'open <filename> <mode>'")
+        print("\nERROR: Invalid use of open command, usage: 'open <filename> <mode>'")
 
 
-def close(command_full):
+def close(command_full, user):
 
     """
     This is the function that is called for the 'Close' command.
@@ -257,14 +259,34 @@ def close(command_full):
     @param command_full: The full command form the command line
     """
 
-    global current_file
+    #global current_file
 
-    if not current_file:
+    #Check if user has no files opened
+    if not len(user.current_files):
         print(f"ERROR: No file is opened, Please open a file using 'open <filename> <mode>' before using 'close' command")
         return
+
+    try:
+        file_to_close = command_full.split()[1]
+
+        #Checking if the file is opened for the current user
+        opened_file_names = [file.name for  file in user.current_files]
+
+        if file_to_close not in opened_file_names:
+            print(f"ERROR: No file {file_to_close} opened for {user}")
+            return
     
-    print(f"{current_file.name}.txt succesfully Closed")
-    current_file = None
+        #Closing the file for  user
+        print(f"{current_file.name}.txt succesfully Closed for {user}")
+        for file in user.current_files:
+            if file.name == file_to_close:
+                user.current_files.remove(file)
+                break
+
+    #current_file = None
+
+    except IndexError as ie:
+        print("\nERROR: Invalid use of close command, usage: 'close <filename>'")
 
 
 def read():
@@ -492,7 +514,7 @@ def prettyPrint(d, indent=0):
             else:
                 print('  ' * (indent+1) + str(value))
 
-def getAbsPathfromRelPath(rel_path):
+def getAbsPathfromRelPath(rel_path, user):
 
     """
     A function that takes in a relative path 
@@ -501,10 +523,10 @@ def getAbsPathfromRelPath(rel_path):
     @param rel_path: The path relative to the current path
     """
 
-    global current_path
+    #global current_path
 
-    if current_path:
-        return current_path + "/" + rel_path
+    if user.current_path:
+        return user.current_path + "/" + rel_path
         
     return rel_path
 

@@ -4,7 +4,7 @@ import time
 #import json
 from concurrent.futures import ThreadPoolExecutor
 from custom_os_utils import *
-
+from thread_run import *
 
 with open("users.json", "r") as f:
 	users_data = json.load(f)
@@ -15,7 +15,7 @@ id1, password1 = 1, "12345"
 id2, password2 = 2, "123"
 therad_user_passwords = ["12345", "12345"]
 
-#commands_full = [["cd pop/mno", "create thread1File"], ["cd pop/mno", "create thread1File"]]
+commands_full = [["cd pop/mno", "delete thread2File"], ["cd pop/mno", "create thread2File"]]
 
 def authenticate_user(id, password):
 
@@ -42,6 +42,9 @@ def thread_routine(id):
 
 	print(f"{user} logged IN")
 
+	#handle_commands(commands_full[id][0], user)
+	#handle_commands(commands_full[id][1], user)
+
 	chDir(commands_full[id][0], user)
 
 	with lock:
@@ -53,10 +56,10 @@ def thread_routine(id):
 
 
 
-#thread1 = threading.Thread(target=thread_routine, args=(0,))
-#thread2 = threading.Thread(target=thread_routine, args=(1,))
+thread1 = threading.Thread(target=thread_routine, args=(0,))
+thread2 = threading.Thread(target=thread_routine, args=(1,))
 
-args = [0, 1]
+"""args = [0, 1]
 with ThreadPoolExecutor(max_workers=2) as executor:
         executor.map(thread_routine, args)
 
@@ -66,9 +69,8 @@ with ThreadPoolExecutor(max_workers=2) as executor:
 thread1.start()
 thread2.start()
 
-user1 = authenticate_user(id1, password1)
+"""user1 = authenticate_user(id1, password1)
 user2 = authenticate_user(id2, password2)
-
 
 print(user1)
 print(user2)"""
