@@ -1,3 +1,2 @@
-cd pop
-open abc r
-readfrom abc 30 3
+open testfile w
+write testfile

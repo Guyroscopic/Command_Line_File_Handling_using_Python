@@ -52,19 +52,19 @@ def thread_routine(id):
 					readFrom(command_full, user)
 		      
 				elif command_func == "append":
-					append()
+					append(command_full, user)
 
 				elif command_func == "write":
-					write()
+					write(command_full, user)
 
 				elif command_func == "writeat":
 					writeAt(command_full)
 
 				elif command_func == "truncate":
-					truncate(command_full)
+					truncate(command_full, user)
 
 				elif command_func == "movetext":
-					move_within_file(command_full)				
+					move_within_file(command_full, user)				
 					
 				elif command_func == "create":
 					create(command_full, user)

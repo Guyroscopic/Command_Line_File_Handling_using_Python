@@ -1,3 +1,4 @@
+
 from FileClass import *
 from user import *
 
@@ -339,7 +340,7 @@ def readFrom(command_full, user):
                 read_data = file.readFrom(data, start_index, size)
                 break
         else:
-            print(f"ERROR: No file {file_to_read}.txt opened for {user}")
+            print(f"ERROR: No file {file_to_read_name}.txt opened for {user}")
             return        
 
         if read_data:
@@ -351,101 +352,159 @@ def readFrom(command_full, user):
 
 
 
-def append():
-
-    if not current_file:
-        print(f"ERROR: No file is opened, Please open a file using 'open <filename> <mode> before using 'append' command")
-        return
+def append(command_full, user):
 
     try:
-        text_to_append = input("\nEnter text to append : ")
-        # append text to file
-        current_file.append(text_to_append, data)
+
+        file_to_append_name = command_full.split()[1]
+        text_to_append      = "This is the text to append"
+
+        if len(user.current_files) == 0:
+            print(f"ERROR: No file is opened, Please open a file using 'open <filename> <mode>' before using 'append' command")
+            return
+
+        #Checking if the file is opened for the current user, if opened, reading it
+        for file in user.current_files:
+            if file.name == file_to_append_name:
+                #text_to_append = input("\nEnter text to append : ")
+                # append text to file
+                file.append(text_to_append, data)
+                break
+
+        else:
+            print(f"ERROR: No file {file_to_append_name}.txt opened for {user}")
+            return 
+
+        #Updating the File Structure and Data Storage in Non-Volatile memory
+        with open("structure.json", "w") as f:
+            json.dump(structure, f)
         
-        #Updating the File Structure and Data Storage in Non-Volatile memory
-        with open("structure.json", "w") as f:
-            json.dump(structure, f)
 
     except IndexError as ie:
-        print("\nERROR: Invalid use of append command, usage: 'append'")
+        print("\nERROR: Invalid use of append command, usage: 'append <filename> <text>'")
+            
+   
 
 
-def truncate(command_full):
-
-    if not current_file:
-        print(f"ERROR: No file is opened, Please open a file using 'open <filename> <mode> before using 'truncate' command")
-        return
+def truncate(command_full, user):
 
     try:
-        size = int(command_full.split()[1])
 
-        current_file.truncate(data, size)
-        
+        file_to_truncate_name = command_full.split()[1]
+        size = int(command_full.split()[2])
+
+        if len(user.current_files) == 0:
+            print(f"ERROR: No file is opened, Please open a file using 'open <filename> <mode>' before using 'truncate' command")
+            return
+
+        #Checking if the file is opened for the current user, if opened, reading it
+        for file in user.current_files:
+            if file.name == file_to_truncate_name:
+                file.truncate(data, size)
+                break
+
+        else:
+            print(f"ERROR: No file {file_to_truncate_name}.txt opened for {user}")
+            return 
+
         #Updating the File Structure and Data Storage in Non-Volatile memory
         with open("structure.json", "w") as f:
             json.dump(structure, f)
 
     except IndexError as ie:
-        print("\nERROR: Invalid use of aruncate command, usage: 'truncate <size>'")
+        print("\nERROR: Invalid use of aruncate command, usage: 'truncate <filename> <size>'")
 
 
 
-def write():
-
-    if not current_file:
-        print(f"ERROR: No file is opened, Please open a file using 'open <filename> <mode> before using 'write' command")
-        return
-
-    text = input("Text: ")
-    current_file.write(text)
-
-    #Updating the File Structure and Data Storage in Non-Volatile memory
-    with open("structure.json", "w") as f:
-        json.dump(structure, f)
-
-
-def writeAt(command_full):
-
-    if not current_file:
-        print(f"ERROR: No file is opened, Please open a file using 'open <filename> <mode> before using 'writeat' command")
-        return
+def write(command_full, user):
 
     try:
-        index = int(command_full.split()[1])
 
-        text = input("\nText : ")
-        current_file.writeAt(data, text, index)
-        #print(len(data["0"]))
+        file_to_write = command_full.split()[1]
+        text = "This is the text of write command"
+
+        if len(user.current_files) == 0:
+            print(f"ERROR: No file is opened, Please open a file using 'open <filename> <mode>' before using 'append' command")
+            return
+
+        #Checking if the file is opened for the current user, if opened, reading it
+        for file in user.current_files:
+            if file.name == file_to_write:
+                file.write(text)
+                break
+
+        else:
+            print(f"ERROR: No file {file_to_write}.txt opened for {user}")
+            return 
 
         #Updating the File Structure and Data Storage in Non-Volatile memory
         with open("structure.json", "w") as f:
             json.dump(structure, f)
 
     except IndexError as ie:
-        print("\nERROR: Invalid use of writeat command, usage: 'writeat <index>'")
+        print("\nERROR: Invalid use of write command, usage: 'write <filename> <text>'")
+
+
+def writeAt(command_full, user):
+
+    try:
+
+        file_to_write_at_name = command_full.split()[1]
+        write_at_index        = command_full.split()[2]
+        text                  = "This is the text to write at command"
+
+        if len(user.current_files) == 0:
+            print(f"ERROR: No file is opened, Please open a file using 'open <filename> <mode>' before using 'append' command")
+            return
+
+        #Checking if the file is opened for the current user, if opened, reading it
+        for file in user.current_files:
+            if file.name == file_to_write_at_name:
+                file.writeAt(data, text, write_at_index)
+                break
+
+        else:
+            print(f"ERROR: No file {file_to_write_at_name}.txt opened for {user}")
+            return 
+
+        #Updating the File Structure and Data Storage in Non-Volatile memory
+        with open("structure.json", "w") as f:
+            json.dump(structure, f)
+
+    except IndexError as ie:
+        print("\nERROR: Invalid use of writeat command, usage: 'writeat <filename> <index>'")
 
 
 
 def move_within_file(command_full):    
 
-    if not current_file:
-        print(f"ERROR: No file is opened, Please open a file using 'open <filename> <mode> before using 'move' command")
-        return
-
     try:
-        start_index = int(command_full.split()[1])
-        to = int(command_full.split()[2])
-        size = int(command_full.split()[3])
 
-        current_file.move(start_index, to, size)
+        file_to_move_text_name = command_full.split()[1]
+        index_to_move_from     = int(command_full.split()[2])
+        index_to_move_to       = int(command_full.split()[3])
+        size_to_move           = int(command_full.split()[4])
 
+        if len(user.current_files) == 0:
+            print(f"ERROR: No file is opened, Please open a file using 'open <filename> <mode>' before using 'move' command")
+            return
 
-         #Updating the File Structure and Data Storage in Non-Volatile memory
+        #Checking if the file is opened for the current user, if opened, reading it
+        for file in user.current_files:
+            if file.name == file_to_move_text_name:
+                file.move(index_to_move_from, index_to_move_to, size_to_move)
+                break
+
+        else:
+            print(f"ERROR: No file {file_to_move_text_name}.txt opened for {user}")
+            return 
+
+        #Updating the File Structure and Data Storage in Non-Volatile memory
         with open("structure.json", "w") as f:
             json.dump(structure, f)
 
     except IndexError as ie:
-        print("\nERROR: Invalid use of movetext command, usage: 'movetext <from> <to> <size>'")
+        print("\nERROR: Invalid use of move command, usage: 'move <filename> <fromIndex> <toIndex> <size>'")
 
 
 ######################    Utility Functions    ###############################################
