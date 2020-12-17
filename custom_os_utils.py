@@ -424,7 +424,7 @@ def write(command_full, user):
         text = "This is the text of write command"
 
         if len(user.current_files) == 0:
-            print(f"ERROR: No file is opened, Please open a file using 'open <filename> <mode>' before using 'append' command")
+            print(f"ERROR: No file is opened, Please open a file using 'open <filename> <mode>' before using 'write' command")
             return
 
         #Checking if the file is opened for the current user, if opened, reading it
@@ -454,7 +454,7 @@ def writeAt(command_full, user):
         text                  = "This is the text to write at command"
 
         if len(user.current_files) == 0:
-            print(f"ERROR: No file is opened, Please open a file using 'open <filename> <mode>' before using 'append' command")
+            print(f"ERROR: No file is opened, Please open a file using 'open <filename> <mode>' before using 'writeat' command")
             return
 
         #Checking if the file is opened for the current user, if opened, reading it
