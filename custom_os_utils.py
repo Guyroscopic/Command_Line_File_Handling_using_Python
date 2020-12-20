@@ -5,7 +5,7 @@ from user import *
 #ROOT_PATH  = ""
 current_path = ROOT_PATH
 current_file = None
-
+PAGE_SIZE    = 1024
 
 #print(len(data["0"]))
 
@@ -173,6 +173,39 @@ def showMap(user):
     prettyPrint(current_dict, 1)
     print("===================END OF MAP========================")
 
+
+def showFileMap(command_full, user):
+
+    try:
+        file_path   = command_full.split()[1]
+
+        file_path   = getAbsPathfromRelPath(file_path, user)
+        
+        file_name   = file_path.split("/")[-1]
+
+        #hierarchy is the required file json object
+        hierarchy   = checkHierarchy(file_path.split("/"))
+
+        if type(hierarchy) == str:
+            print(f"File '{file_path}'.txt does not exist ({user})")
+
+        else:
+            print(hierarchy['data'])
+            for chunk_data in hierarchy['data']:
+                #print(chunk_data)
+                chunk_number = hierarchy['data'][chunk_data]
+                page = int(chunk_number['page'])
+                start = int(chunk_number['start'])
+                end   = start + int(chunk_number['length'])
+
+                start_mem_location = start + page * PAGE_SIZE 
+                end_mem_location   = end + page * PAGE_SIZE 
+
+                print("--> " + str(start_mem_location) + " - " + str(end_mem_location))
+    
+
+    except IndexError as ie:
+        print("\nERROR: No File name or path specified, usage: 'showfilemap <filePath>'")         
 
 def move(command_full, user):
 

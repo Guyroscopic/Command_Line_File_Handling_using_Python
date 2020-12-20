@@ -1,2 +1,1 @@
-open testfile w
-write testfile
+showfilemap pop/abc

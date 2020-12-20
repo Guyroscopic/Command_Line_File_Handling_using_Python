@@ -34,7 +34,7 @@ def isCritical(command_full):
     command_func = command_full.split()[0]    
     
     #list of critical commands
-    critical_commands = ["showmap", "create", "delete", "mkdir", "move", "write", "truncate", "append", "writeat", "movetext", "read", "readfrom"]
+    critical_commands = ["showmap", "showfilemap", "create", "delete", "mkdir", "move", "write", "truncate", "append", "writeat", "movetext", "read", "readfrom"]
 
     if command_func in critical_commands:
         return True

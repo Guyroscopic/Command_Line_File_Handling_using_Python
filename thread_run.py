@@ -9,7 +9,7 @@ id1, password1 = 1, "12345"
 id2, password2 = 2, "123"
 therad_user_passwords = ["12345", "12345"]
 
-commands = ["create", "delete", "mkdir", "move", "movetext", "cd", "open", "close", "showmap", "read", "readfrom", "append", "write", "writeat", "truncate", "exit", "help"]
+commands = ["create", "delete", "mkdir", "move", "movetext", "cd", "open", "close", "showmap", "showfilemap", "read", "readfrom", "append", "write", "writeat", "truncate", "exit", "help"]
 
 simple_lock = threading.Lock()
 
@@ -79,7 +79,9 @@ def thread_routine(id):
 					move(command_full, user)
 
 				elif command_func == "showmap":
-					showMap(user)               
+					showMap(user)
+				elif command_func == "showfilemap":
+					showFileMap(command_full, user)               
 
 	    #If the command is not critical
 		else:
