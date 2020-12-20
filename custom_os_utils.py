@@ -174,7 +174,7 @@ def showMap(user):
     print("===================END OF MAP========================")
 
 
-def showFileMap(command_full, user):
+def showMemoryMap(command_full, user):
 
     try:
         file_path   = command_full.split()[1]
@@ -189,20 +189,33 @@ def showFileMap(command_full, user):
         if type(hierarchy) == str:
             print(f"File '{file_path}'.txt does not exist ({user})")
 
+
         else:
-            print(hierarchy['data'])
+
+            #total number of chunks of a file
+            number_of_chunks = len(hierarchy['data'])
+
+            print("===================START OF MEMORY MAP======================")
+            print(f"File {file_name}.txt has {number_of_chunks} chunks")
+            print("Here is the memory location of all the chunks :")
+
+            #printing memory location of file chunk by chunk
             for chunk_data in hierarchy['data']:
-                #print(chunk_data)
+
                 chunk_number = hierarchy['data'][chunk_data]
+
                 page = int(chunk_number['page'])
+
                 start = int(chunk_number['start'])
                 end   = start + int(chunk_number['length'])
 
                 start_mem_location = start + page * PAGE_SIZE 
                 end_mem_location   = end + page * PAGE_SIZE 
 
-                print("--> " + str(start_mem_location) + " - " + str(end_mem_location))
-    
+                print(f"Chunk Number {chunk_data}--> {start_mem_location} - {end_mem_location}")
+                
+            print("===================END OF MEMORY MAP========================")
+  
 
     except IndexError as ie:
         print("\nERROR: No File name or path specified, usage: 'showfilemap <filePath>'")         

@@ -1,1 +1,1 @@
-showfilemap pop/abc
+showmap pop
