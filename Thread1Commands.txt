@@ -1,2 +1,6 @@
 open testfile r
+open pop/abc r
 read testfile
+read abc
+close testfile
+close abc

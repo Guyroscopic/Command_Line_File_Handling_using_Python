@@ -1,0 +1,5 @@
+open testfile a
+append testfile
+close testfile
+open testfile r
+read testfile

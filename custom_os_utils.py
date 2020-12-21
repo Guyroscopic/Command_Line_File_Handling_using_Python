@@ -245,6 +245,7 @@ def Open(command_full, user):
             else:
                 file = CustomFile(file_name, hierarchy, file_mode)
                 user.current_files.append(file)
+                #print("OPEN:", user.getCurrentFileNames())
                 print(f"'{file_path}.txt' succesfully Opened in '{file_mode}' mode for {user}")   
                
 
@@ -269,21 +270,25 @@ def close(command_full, user):
         return
 
     try:
-        file_to_close = command_full.split()[1]
+        file_to_close_name = command_full.split()[1]
 
         #Checking if the file is opened for the current user
-        user_opened_file_names = user.getCurrentFileNames()
+        #user_opened_file_names = user.getCurrentFileNames()
 
-        if file_to_close not in user_opened_file_names:
-            print(f"ERROR: No file {file_to_close} opened for {user}")
-            return
+        #if file_to_close not in user_opened_file_names:
+        #    print(f"ERROR: No file {file_to_close}.txt opened for {user}")
+        #    return
     
         #Closing the file for  user
-        print(f"{file_to_close}.txt succesfully Closed for {user}")
+        
         for file in user.current_files:
-            if file.name == file_to_close:
+            if file.name == file_to_close_name:
+                print(f"{file_to_close_name}.txt succesfully Closed for {user}")
                 user.current_files.remove(file)
+                #print("CLOSE:", user.getCurrentFileNames())
                 break
+        else:
+            print(f"ERROR: No file {file_to_close_name}.txt opened for {user}")
 
     #current_file = None
 
@@ -476,7 +481,7 @@ def writeAt(command_full, user):
 
 
 
-def move_within_file(command_full):    
+def move_within_file(command_full, user):    
 
     try:
 
@@ -513,19 +518,19 @@ def move_within_file(command_full):
 def help():
     print("mkdir:"    + "\t\t" + "Used to create a directory. Usage: mkdir <directoryPath>\n"                                              + 
           "cd:"       + "\t\t" + "Used to change the  current directory. Usage: cd <directoryPath>\n"                                      +
-          "create:"   + "\t\t" + "Used to create a file. Usage: create <filepath+fileName>\n"                                              +
-          "delete:"   + "\t\t" + "Used to delete a file. Usage: delete <filepath+filename>\n"                                              +
+          "create:"   + "\t\t" + "Used to create a file. Usage: create <fileName>\n"                                              +
+          "delete:"   + "\t\t" + "Used to delete a file. Usage: delete <filename>\n"                                              +
           "showmap:"  + "\t"   + "Used to print the map of directories from current directory. Usage: showmap\n"                           +
-          "move:"     + "\t\t" + "Used to copy content of a file to another. Usage: move <srcFilePath+filenmae> <trgtFilePath+filename>\n" +
-          "open:"     + "\t\t" + "Used to open a file to perform operations. Usage: open <filePath+filename> <mode>\n"                     +
-          "close:"    + "\t\t" + "Used to close an opened file. Usage: close\n"                                                           +
-          "read:"     + "\t\t" + "Used to read data from an opened file. Usage: read\n"                                                    +
-          "readfrom:" + "\t"   + "Used to read data from an opened file at given index. Usage: readfrom <index> <size>\n"                  +
-          "truncate:" + "\t"   + "Used to delete data from an opened file onwards from a given index. Usage: truncate <size>\n"            +
-          "append:"   + "\t\t" + "Used to appened data to an opened file. Usage: appened\n"                                                +
-          "write:"    + "\t\t" + "Used to write to an opened file. Usage: write\n"                                                         +
-          "writeat:"  + "\t"   + "Used to write to an opened file at given index. Usage: writeat <index>\n"                                +
-          "movetext:" + "\t"   + "Used to move text within a file. Usage: movetext <from> <to> <size>"                                   
+          "move:"     + "\t\t" + "Used to copy content of a file to another. Usage: move <srcfilenmae> <trgtfilename>\n" +
+          "open:"     + "\t\t" + "Used to open a file to perform operations. Usage: open <filename> <mode>\n"                     +
+          "close:"    + "\t\t" + "Used to close an opened file. Usage: close <filename>\n"                                                           +
+          "read:"     + "\t\t" + "Used to read data from an opened file. Usage: read <filename>\n"                                                    +
+          "readfrom:" + "\t"   + "Used to read data from an opened file at given index. Usage: readfrom <filename> <index> <size>\n"                  +
+          "truncate:" + "\t"   + "Used to delete data from an opened file onwards from a given index. Usage: truncate <filename> <size>\n"            +
+          "append:"   + "\t\t" + "Used to appened data to an opened file. Usage: appened <filename>\n"                                                +
+          "write:"    + "\t\t" + "Used to write to an opened file. Usage: write <filename>\n"                                                         +
+          "writeat:"  + "\t"   + "Used to write to an opened file at given index. Usage: writeat <filename> <index>\n"                                +
+          "movetext:" + "\t"   + "Used to move text within a file. Usage: movetext <filename> <from> <to> <size>"                                   
          )
 
 
@@ -593,7 +598,11 @@ def prettyPrint(d, indent=0):
         if key not in ["type", "extension", "data", "page"]:
             
             if isinstance(value, dict):
-                print('  ' * indent + str(key) + ": " + str(value["type"]))
+                if value["type"] == "file":
+                    print('  ' * indent + str(key) + ": " + str(value["type"]) + " (" + str(getSizeOfFile(value)) + " bytes)")                    
+                else:
+                    print('  ' * indent + str(key) + ": " + str(value["type"]))
+
                 prettyPrint(value, indent+1)
             else:
                 print('  ' * (indent+1) + str(value))
@@ -635,3 +644,10 @@ def getParent(path):
     return ROOT_PATH
 
 
+def getSizeOfFile(file_dict):
+
+    total_size = 0 
+    for chuck_num, chunk_dict in file_dict["data"].items():
+        total_size += int(chunk_dict["length"])
+
+    return total_size

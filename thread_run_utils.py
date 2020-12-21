@@ -6,7 +6,6 @@ with open("users.json", "r") as f:
         users_data = json.load(f)
 
 
-
 def authenticate_user(id, password):
 
     try:
@@ -91,65 +90,3 @@ def getThreadCommandfromId(id):
         user_commands = f.readlines()
     
     return user_commands
-    
-
-"""
-def getFunctionNamefromCommand(command_full, user):
-        
-        command_func = command_full.split()[0]
-
-        if command_func == "create": 
-                create(user_command)
-                        
-        elif command_func == "mkdir":
-                mkDir(user_command)                       
-                
-        elif command_func == "delete":
-                delete(user_command)
-
-        elif command_func == "cd":                       
-                user.current_path = chDir(user_command, user)
-
-        elif command_func == "open":
-                Open(user_command)
-
-        elif command_func == "close":
-                close(user_command)
-
-        elif command_func == "read":
-                read()
-
-        elif command_func == "readfrom":
-                readFrom(user_command)
-
-        elif command_func == "append":
-                append()
-
-        elif command_func == "write":
-                write()
-
-        elif command_func == "WriteAt":
-                writeAt(user_command)
-                
-        elif command_func == "truncate":
-                truncate(user_command)
-
-        elif command_func == "movetext":
-                move_within_file(user_command)
-                
-        elif command_func == "showmap":
-                showMap()
-
-        elif command_func == "move":
-                move(user_command)
-
-        elif command_func == "help":
-                help()     
-
-        elif command_func == "exit":
-                print("\nQuitting")
-
-"""
-
-
-

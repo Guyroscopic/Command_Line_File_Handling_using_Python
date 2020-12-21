@@ -7,7 +7,7 @@ from thread_run_utils import *
 
 id1, password1 = 1, "12345"
 id2, password2 = 2, "123"
-therad_user_passwords = ["12345", "12345"]
+therad_user_passwords = ["12345", "12345",  "12345"]
 
 commands = ["create", "delete", "mkdir", "move", "movetext", "cd", "open", "close", "showmap", "read", "readfrom", "append", "write", "writeat", "truncate", "exit", "help"]
 
@@ -100,8 +100,9 @@ def thread_routine(id):
 	
 
 
-thread1 = threading.Thread(target=thread_routine, args=(0,))
-thread2 = threading.Thread(target=thread_routine, args=(1,))
+#thread0 = threading.Thread(target=thread_routine, args=(0,))
+thread1 = threading.Thread(target=thread_routine, args=(1,))
+#thread2 = threading.Thread(target=thread_routine, args=(2,))
 
 """args = [0, 1]
 with ThreadPoolExecutor(max_workers=2) as executor:
@@ -109,9 +110,10 @@ with ThreadPoolExecutor(max_workers=2) as executor:
 
 
 """
-
+#thread0.start()
 thread1.start()
-thread2.start()
+#thread2.start()
 
+#thread0.join()
 thread1.join()
-thread2.join()
+#thread2.join()
