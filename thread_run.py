@@ -5,13 +5,13 @@ from concurrent.futures import ThreadPoolExecutor
 from thread_run_utils import *
 
 
-id1, password1 = 1, "12345"
-id2, password2 = 2, "123"
-therad_user_passwords = ["12345", "12345",  "12345"]
+therad_user_passwords = ["12345" for i in range(4)]
 
 commands = ["create", "delete", "mkdir", "move", "movetext", "cd", "open", "close", "showmap", "showmemorymap", "read", "readfrom", "append", "write", "writeat", "truncate", "exit", "help"]
 
 simple_lock = threading.Lock()
+
+
 
 def thread_routine(id):
 
@@ -22,6 +22,9 @@ def thread_routine(id):
 
 	password = therad_user_passwords[id]
 	user = authenticate_user(id, password)
+
+	if id > 1:
+		time.sleep(0.5)
 
 	print(f"{user} logged IN")
 
@@ -100,23 +103,24 @@ def thread_routine(id):
 				close(command_full, user)
 
 	print(f"{user} logged OUT")
-	
 
 
-#thread0 = threading.Thread(target=thread_routine, args=(0,))
+#Creaing Threads
+thread0 = threading.Thread(target=thread_routine, args=(0,))
 thread1 = threading.Thread(target=thread_routine, args=(1,))
-#thread2 = threading.Thread(target=thread_routine, args=(2,))
+thread2 = threading.Thread(target=thread_routine, args=(2,))
+thread3 = threading.Thread(target=thread_routine, args=(3,))
 
-"""args = [0, 1]
-with ThreadPoolExecutor(max_workers=2) as executor:
-		executor.map(thread_routine, args)
-
-
-"""
-#thread0.start()
+#Strating Threads
+thread0.start()
 thread1.start()
-#thread2.start()
+thread2.start()
+thread3.start()
 
-#thread0.join()
+#Waiting for them to finish
+thread0.join()
 thread1.join()
-#thread2.join()
+thread2.join()
+thread3.join()
+
+

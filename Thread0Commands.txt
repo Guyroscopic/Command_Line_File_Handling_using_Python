@@ -1,1 +1,7 @@
-showmap pop
+cd thread0Dir
+create demoFile1.txt
+showmap
+open demoFile1.txt w
+write demoFile1.txt
+close demoFile1.txt
+showmemorymap demoFile1.txt

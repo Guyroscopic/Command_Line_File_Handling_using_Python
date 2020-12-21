@@ -1,5 +1,13 @@
-open testfile a
-append testfile
-close testfile
-open testfile r
-read testfile
+cd thread0Dir
+open demoFile1.txt r
+read demoFile1.txt
+close demoFile1.txt
+open demoFile1.txt a
+append demoFile1.txt
+close demoFile1.txt
+open demoFile1.txt r
+read demoFile1.txt
+close demoFile1.txt
+showmemorymap demoFile1.txt
+delete demoFile1.txt
+showmap

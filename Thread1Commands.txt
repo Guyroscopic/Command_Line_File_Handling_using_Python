@@ -1,6 +1,6 @@
-open testfile r
-open pop/abc r
-read testfile
-read abc
-close testfile
-close abc
+cd thread1Dir
+create demoFile2.py
+showmap
+cd ..
+move pop/abc.txt thread1Dir/demoFile2.py
+showmemorymap thread1Dir/demoFile2.py

@@ -11,9 +11,10 @@ data = structure["data"]
 class CustomFile:
 	
 	#Constructor
-	def __init__(self, name, file_dict, mode):
+	def __init__(self, name, extension, file_dict, mode):
 
 		self.name 	   = name
+		self.extension = extension
 		self.file_dict = file_dict
 		self.mode 	   = mode
 

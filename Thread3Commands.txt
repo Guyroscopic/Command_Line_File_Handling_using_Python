@@ -1,0 +1,13 @@
+cd thread1Dir
+open demoFile2.py r
+readfrom demoFile2.py 30 3
+close demoFile2.py
+open demoFile2.py t
+truncate demoFile2.py 30
+close demoFile2.py
+open demoFile2.py r
+read demoFile2.py 
+close demoFile2.py
+showmemorymap demoFile2.txt
+delete demoFile2.py
+showmap

@@ -2,5 +2,6 @@
 	"0" : {"username": "thread0", "password": "12345"},
 	"1" : {"username": "thread1", "password": "12345"},
 	"2" : {"username": "thread2", "password": "12345"},
-	"3" : {"username": "thread3", "password": "12345"}
+	"3" : {"username": "thread3", "password": "12345"},
+	"4" : {"username": "thread4", "password": "12345"}
 }

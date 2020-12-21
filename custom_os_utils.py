@@ -16,8 +16,16 @@ def create(command_full, user):
         try:
             file_path      = command_full.split()[1]
             file_path      = getAbsPathfromRelPath(file_path, user)
-           
+            
             file_to_create = file_path.split("/")[-1]
+
+            if not file_to_create.split("."):
+                print("ERROR: No file extension specified")
+                return
+
+
+            file_extension = file_to_create.split(".")[-1]
+            file_to_create = "".join(file_to_create.split(".")[:-1])
             parent_dir     = file_path.split("/")[:-1]
             hierarchy      = checkHierarchy(parent_dir)
 
@@ -32,17 +40,17 @@ def create(command_full, user):
                 except KeyError as ke:
                     hierarchy[file_to_create] = {
                                                     "type"     : "file",
-                                                    "extension": ".txt",
+                                                    "extension": "." + file_extension,
                                                     "data"     : {}
                                                 }
 
                     with open("structure.json", "w") as f:
                         json.dump(structure, f)
 
-                    print(f"File '{file_path}.txt' created by {user}")
+                    print(f"File '{file_path}' created by {user}")
 
         except IndexError as ie:
-                print("\nERROR: No File name or path specified, usage: 'create <filePath>'")
+                print("\nERROR: No File name or path specified, usage: 'create <fileName>'")
 
 
 def delete(command_full, user):
@@ -50,7 +58,15 @@ def delete(command_full, user):
         try:
             file_path      = command_full.split()[1]
             file_path      = getAbsPathfromRelPath(file_path, user)
+
             file_to_delete = file_path.split("/")[-1]
+
+            if not file_to_delete.split("."):
+                print("ERROR: No file extension specified")
+                return
+            file_extension = file_to_delete.split(".")[-1]
+            file_to_delete = "".join(file_to_delete.split(".")[:-1])
+
             parent_dir     = file_path.split("/")[:-1]
             hierarchy      = checkHierarchy(parent_dir)
 
@@ -76,14 +92,14 @@ def delete(command_full, user):
                         with open("structure.json", "w") as f:
                             json.dump(structure, f)
 
-                        print(f"File '{file_path}.txt' deleted by {user}")
+                        print(f"File '{file_path}' deleted by {user}")
 
                 except KeyError as ke:
                     #If the file does not Exist
-                    print(f"File {file_path}.txt does not exist")
+                    print(f"File {file_path} does not exist")
 
         except IndexError as ie:
-                print("\nERROR: No Directory name or path specified, usage: 'delete <filePath>'")
+                print("\nERROR: No Directory name or path specified, usage: 'delete <fileName>'")
 
 
 def mkDir(command_full, user):
@@ -179,15 +195,25 @@ def showMemoryMap(command_full, user):
     try:
         file_path   = command_full.split()[1]
 
-        file_path   = getAbsPathfromRelPath(file_path, user)
-        
+        file_path   = getAbsPathfromRelPath(file_path, user)        
         file_name   = file_path.split("/")[-1]
+
+        #Checking is user provided an extension for the file
+        if not file_name.split("."):
+                print("ERROR: No file extension specified for the source file")
+                return
+
+        file_extension = "." + file_name.split(".")[-1]
+
+        #removing the extension from src_filename and src_file_path
+        file_name  = "".join(file_name.split(".")[:-1])
+        file_path = "".join(file_path.split(".")[:-1])
 
         #hierarchy is the required file json object
         hierarchy   = checkHierarchy(file_path.split("/"))
 
         if type(hierarchy) == str:
-            print(f"File '{file_path}'.txt does not exist ({user})")
+            print(f"File '{file_path}{file_extension}' does not exist ({user})")
 
 
         else:
@@ -223,13 +249,38 @@ def showMemoryMap(command_full, user):
 def move(command_full, user):
 
     try:
+        #Getting the source file path and name
         src_file_path  = command_full.split()[1]
         src_file_path = getAbsPathfromRelPath(src_file_path, user)
         src_filename   = src_file_path.split("/")[-1]
 
+
+        #Checking is user provided an extension for source file
+        if not src_filename.split("."):
+                print("ERROR: No file extension specified for the source file")
+                return
+
+        src_file_extension = "." + src_filename.split(".")[-1]
+
+        #removing the extension from src_filename and src_file_path
+        src_filename  = "".join(src_filename.split(".")[:-1])
+        src_file_path = "".join(src_file_path.split(".")[:-1])        
+
+        #Getting the target file path and name
         trgt_file_path = command_full.split()[2]
         trgt_file_path = getAbsPathfromRelPath(trgt_file_path, user)
         trgt_filename  = trgt_file_path.split("/")[-1]
+
+        #Checking is user provided an extension for target file
+        if not trgt_filename.split("."):
+                print("ERROR: No file extension specified for the target file")
+                return
+
+        trgt_file_extension = "." + trgt_filename.split(".")[-1]        
+
+        #removing the extension from trgt_filename and trgt_file_path
+        trgt_filename  = "".join(trgt_filename.split(".")[:-1])
+        trgt_file_path = "".join(trgt_file_path.split(".")[:-1])
 
         #print(src_file_path, trgt_file_path)
         #print(src_filename, trgt_filename)
@@ -238,19 +289,24 @@ def move(command_full, user):
 
         #Checking if both files exist
         if type(src_hierarchy) == str:
-            print(f"\nERROR: Source File '{src_hierarchy}'.txt could not be found")
+            print(f"\nERROR: Source File '{src_hierarchy}' could not be found")
             return
         if type(trgt_hierarchy) == str:
-            print(f"\nERROR: Source File '{trgt_hierarchy}'.txt could not be found")
+            print(f"\nERROR: Source File '{trgt_hierarchy}' could not be found")
             return
         
         #Reading the data from the Source File
-        src_file_obj = CustomFile(src_filename, src_hierarchy, "r")
+        src_file_obj = CustomFile(src_filename, src_file_extension, src_hierarchy, "r")
         src_data     = src_file_obj.read()
 
         #Writing the data from the Source File
-        trgt_file_obj = CustomFile(trgt_filename, trgt_hierarchy, "w") ###Either w or a
+        trgt_file_obj = CustomFile(trgt_filename, trgt_file_extension, trgt_hierarchy, "w") ###Either w or a
         trgt_file_obj.write(src_data)
+
+        ##WRITE TO THE STRUCTURE
+        #Updating the File Structure and Data Storage in Non-Volatile memory
+        with open("structure.json", "w") as f:
+            json.dump(structure, f)
 
     except IndexError as ie:
         print("\nERROR: No Directory name or path specified, usage: 'cd <directoryPath>'")    
@@ -273,15 +329,25 @@ def Open(command_full, user):
             print(f"ERROR: Invalid mode, Please chose a mode from: 'r', 't', 'a', 'w', 'm'")
             return
 
-        file_path   = getAbsPathfromRelPath(file_path, user)
-        
+        file_path   = getAbsPathfromRelPath(file_path, user)        
         file_name   = file_path.split("/")[-1]
 
+        #Checking is user provided an extension for the file
+        if not file_name.split("."):
+                print("ERROR: No file extension specified for the file")
+                return
+
+        file_extension = "." + file_name.split(".")[-1]        
+
+        #removing the extension from trgt_filename and trgt_file_path
+        #file_name  = "".join(file_name.split(".")[:-1])
+        file_path = "".join(file_path.split(".")[:-1])
+        
         #hierarchy is the required file json object
         hierarchy   = checkHierarchy(file_path.split("/"))
 
         if type(hierarchy) == str:
-            print(f"File '{file_path}'.txt does not exist ({user})")
+            print(f"File '{file_path}' does not exist ({user})")
 
         else:
 
@@ -289,10 +355,10 @@ def Open(command_full, user):
                 print(f"'{file_path}' is not a file ({user})")
 
             else:
-                file = CustomFile(file_name, hierarchy, file_mode)
+                file = CustomFile(file_name, file_extension, hierarchy, file_mode)
                 user.current_files.append(file)
                 #print("OPEN:", user.getCurrentFileNames())
-                print(f"'{file_path}.txt' succesfully Opened in '{file_mode}' mode for {user}")   
+                print(f"'{file_path}{file_extension}' succesfully Opened in '{file_mode}' mode for {user}")   
                
 
     except IndexError as ie:
@@ -329,12 +395,12 @@ def close(command_full, user):
         
         for file in user.current_files:
             if file.name == file_to_close_name:
-                print(f"{file_to_close_name}.txt succesfully Closed for {user}")
+                print(f"{file_to_close_name} succesfully Closed for {user}")
                 user.current_files.remove(file)
                 #print("CLOSE:", user.getCurrentFileNames())
                 break
         else:
-            print(f"ERROR: No file {file_to_close_name}.txt opened for {user}")
+            print(f"ERROR: No file {file_to_close_name} opened for {user}")
 
     #current_file = None
 
@@ -345,7 +411,7 @@ def close(command_full, user):
 def read(command_full, user):
 
     #global current_file
-
+    
     if len(user.current_files) == 0:
         print(f"ERROR: No file is opened, Please open a file using 'open <filename> <mode>' before using 'read' command")
         return
@@ -359,12 +425,12 @@ def read(command_full, user):
                 read_data = file.read()
                 break
         else:
-            print(f"ERROR: No file {file_to_read_name}.txt opened for {user}")
+            print(f"ERROR: No file {file_to_read_name} opened for {user}")
             return            
 
         
         if read_data:
-            print(f"Contents of {file_to_read_name}.txt:")
+            print(f"Contents of {file_to_read_name}:")
             print(read_data)
 
     except IndexError as ie:
@@ -391,11 +457,11 @@ def readFrom(command_full, user):
                 read_data = file.readFrom(data, start_index, size)
                 break
         else:
-            print(f"ERROR: No file {file_to_read_name}.txt opened for {user}")
+            print(f"ERROR: No file {file_to_read_name} opened for {user}")
             return        
 
         if read_data:
-            print(f"Contents of {file_to_read_name}.txt:")
+            print(f"Contents of {file_to_read_name}:")
             print(read_data)
 
     except IndexError as e:
@@ -423,7 +489,7 @@ def append(command_full, user):
                 break
 
         else:
-            print(f"ERROR: No file {file_to_append_name}.txt opened for {user}")
+            print(f"ERROR: No file {file_to_append_name} opened for {user}")
             return 
 
         #Updating the File Structure and Data Storage in Non-Volatile memory
@@ -564,18 +630,18 @@ def move_within_file(command_full, user):
 def help():
     print("mkdir:"    + "\t\t" + "Used to create a directory. Usage: mkdir <directoryPath>\n"                                              + 
           "cd:"       + "\t\t" + "Used to change the  current directory. Usage: cd <directoryPath>\n"                                      +
-          "create:"   + "\t\t" + "Used to create a file. Usage: create <fileName>\n"                                              +
-          "delete:"   + "\t\t" + "Used to delete a file. Usage: delete <filename>\n"                                              +
+          "create:"   + "\t\t" + "Used to create a file. Usage: create <fileName>\n"                                                       +
+          "delete:"   + "\t\t" + "Used to delete a file. Usage: delete <filename>\n"                                                       +
           "showmap:"  + "\t"   + "Used to print the map of directories from current directory. Usage: showmap\n"                           +
-          "move:"     + "\t\t" + "Used to copy content of a file to another. Usage: move <srcfilenmae> <trgtfilename>\n" +
-          "open:"     + "\t\t" + "Used to open a file to perform operations. Usage: open <filename> <mode>\n"                     +
-          "close:"    + "\t\t" + "Used to close an opened file. Usage: close <filename>\n"                                                           +
-          "read:"     + "\t\t" + "Used to read data from an opened file. Usage: read <filename>\n"                                                    +
-          "readfrom:" + "\t"   + "Used to read data from an opened file at given index. Usage: readfrom <filename> <index> <size>\n"                  +
-          "truncate:" + "\t"   + "Used to delete data from an opened file onwards from a given index. Usage: truncate <filename> <size>\n"            +
-          "append:"   + "\t\t" + "Used to appened data to an opened file. Usage: appened <filename>\n"                                                +
-          "write:"    + "\t\t" + "Used to write to an opened file. Usage: write <filename>\n"                                                         +
-          "writeat:"  + "\t"   + "Used to write to an opened file at given index. Usage: writeat <filename> <index>\n"                                +
+          "move:"     + "\t\t" + "Used to copy content of a file to another. Usage: move <srcfilenmae> <trgtfilename>\n"                   +
+          "open:"     + "\t\t" + "Used to open a file to perform operations. Usage: open <filename> <mode>\n"                              +
+          "close:"    + "\t\t" + "Used to close an opened file. Usage: close <filename>\n"                                                 +
+          "read:"     + "\t\t" + "Used to read data from an opened file. Usage: read <filename>\n"                                         +
+          "readfrom:" + "\t"   + "Used to read data from an opened file at given index. Usage: readfrom <filename> <index> <size>\n"       +
+          "truncate:" + "\t"   + "Used to delete data from an opened file onwards from a given index. Usage: truncate <filename> <size>\n" +
+          "append:"   + "\t\t" + "Used to appened data to an opened file. Usage: appened <filename>\n"                                     +
+          "write:"    + "\t\t" + "Used to write to an opened file. Usage: write <filename>\n"                                              +
+          "writeat:"  + "\t"   + "Used to write to an opened file at given index. Usage: writeat <filename> <index>\n"                     +
           "movetext:" + "\t"   + "Used to move text within a file. Usage: movetext <filename> <from> <to> <size>"                                   
          )
 
@@ -645,7 +711,7 @@ def prettyPrint(d, indent=0):
             
             if isinstance(value, dict):
                 if value["type"] == "file":
-                    print('  ' * indent + str(key) + ": " + str(value["type"]) + " (" + str(getSizeOfFile(value)) + " bytes)")                    
+                    print('  ' * indent + str(key)  + str(value["extension"]) +": " + str(value["type"]) + " (" + str(getSizeOfFile(value)) + " bytes)")                    
                 else:
                     print('  ' * indent + str(key) + ": " + str(value["type"]))
 
