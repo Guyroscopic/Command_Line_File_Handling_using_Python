@@ -14,12 +14,12 @@ def authenticate_user(id, password):
         if user["password"] == password:
             return User(id, user["username"], password, [], "")
         else:
-            print(f"ERROR: Wrong Password for ID {id}")
-            return
+            #print(f"ERROR: Wrong Password for ID {id}")
+            return f"ERROR: Wrong Password for ID {id}"
 
     except KeyError as ke:
-        print(f"ERROR: No user with ID '{id}'")
-        return
+        #print(f"ERROR: No user with ID '{id}'")
+        return f"ERROR: No user with ID '{id}'"
 
 def isCritical(command_full):
 
