@@ -1,13 +1,13 @@
-
 from FileClass import *
 from user import *
 
-#ROOT_PATH  = ""
+
 current_path = ROOT_PATH
 current_file = None
 PAGE_SIZE    = 1024
 
-#print(len(data["0"]))
+commands = ["create", "delete", "mkdir", "move", "movetext", "cd", "open", "close", "showmap", "read", "readfrom", "append", "write", "writeat", "truncate", "exit", "help"]
+
 
 ######################      Function that operate on/modify File structure    ################
 

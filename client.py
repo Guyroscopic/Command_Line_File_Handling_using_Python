@@ -17,10 +17,17 @@ server.send(user_id.encode())
 server.send(user_password.encode())
 
 print(server.recv(1024).decode())
-#msg = True
-#while True:	
 
-	#user_id 	  = input("Enter Your User ID: ")
+command_full_input_prompt = "not empty"
+while command_full_input_prompt:	
+
+	command_full_input_prompt = server.recv(1024).decode()	
+	command_full    		  = input(command_full_input_prompt)
+	server.send(command_full.encode())
+
+	server_response = server.recv(1024).decode()
+	print(server_response)
+
 	#user_password = input("Enter Your Password: ")
 
 	

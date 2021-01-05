@@ -7,7 +7,7 @@ from thread_run_utils import *
 
 therad_user_passwords = ["12345" for i in range(4)]
 
-commands = ["create", "delete", "mkdir", "move", "movetext", "cd", "open", "close", "showmap", "showmemorymap", "read", "readfrom", "append", "write", "writeat", "truncate", "exit", "help"]
+#commands = ["create", "delete", "mkdir", "move", "movetext", "cd", "open", "close", "showmap", "showmemorymap", "read", "readfrom", "append", "write", "writeat", "truncate", "exit", "help"]
 
 simple_lock = threading.Lock()
 

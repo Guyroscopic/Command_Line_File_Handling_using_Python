@@ -1,7 +1,6 @@
 import socket
-import threading
 from rpc_utils import *
- 
+
 
 threads = []
 port    = 95
@@ -19,7 +18,7 @@ print("Server is listening")
 while True:
 
 	client, client_addr = server.accept()
-	print("here")
+	#print("here")
 	print(f"Got connection from {client_addr}")
 
 	threads.append(threading.Thread(target=thread_routine, args=(client,)))

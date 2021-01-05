@@ -1,8 +1,5 @@
 from custom_os_utils import *
 
-commands = ["create", "delete", "mkdir", "move", "movetext", "cd", "open", "close", "showmap", "read", "readfrom", "append", "write", "writeat", "truncate", "exit", "help"]
-
-
 """for i, item in enumerate(MENU_ITEMS):
 	if i == 0:
 		print(f"Chose a Command:\n\t{i+1}){item}")
