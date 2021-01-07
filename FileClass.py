@@ -30,8 +30,7 @@ class CustomFile:
 		"""
 
 		if self.mode != "r":
-			print(f"ERROR: File is opened in {self.mode} mode, Please  open the file using 'Open <filename> r' for reading")
-			return
+			return f"ERROR: File is opened in {self.mode} mode, Please  open the file using 'Open <filename> r' for reading"
 
 		text_read = ""
 
@@ -43,7 +42,7 @@ class CustomFile:
 			length = int(chunk_dict["length"])
 
 			text_read += data[page][start : start+length]
-			
+		
 		return text_read
 
 
@@ -60,18 +59,16 @@ class CustomFile:
 		"""
 
 		if self.mode != "r":
-			print(f"ERROR: File is opened in {self.mode} mode, Please open the file using 'open <filename> r' for reading")
-			return
+			return f"ERROR: File is opened in {self.mode} mode, Please open the file using 'open <filename> r' for reading"
 
 		#reading the file 
 		text_read = self.read()
 
 		if index > len(text_read):
-			print(f"INDEX ERROR: Couldn't read file. Index greater than file length{len(text_read)}")
-			return
+			return f"INDEX ERROR: Couldn't read file. Index greater than file length{len(text_read)}"
 
 		elif index < 0:
-			print(f"INDEX ERROR: Invalid index - index less than zero")
+			return f"INDEX ERROR: Invalid index - index less than zero"
 
 		#reading file from given index
 		text_read_from = text_read[index : index+size]
@@ -82,14 +79,12 @@ class CustomFile:
 	def append(self, text, data):
 
 		if self.mode != 'a':
-			print(f"ERROR: File is opened in {self.mode} mode, Please  open the file using 'Open <filename> a' for appending")
-			return
+			return f"ERROR: File is opened in {self.mode} mode, Please  open the file using 'Open <filename> a' for appending"
 
 
 		#Checking if that page has memory
 		if not hasEnoughMemory(text, data):
-			print(f"ERROR: not enough memory")
-			return
+			return f"ERROR: not enough memory"
 
 		#Getting the free memory chunks in the data storage
 		free_memory  	  = getFreeMemory(data)
@@ -127,6 +122,7 @@ class CustomFile:
 																		"length": str(len(text_to_add))
 									 							   }
 					chunk_to_append += 1
+		return "Text has been appended to the file"
 			
 
 	def truncate(self, data, size):
@@ -142,8 +138,7 @@ class CustomFile:
 		"""
 
 		if self.mode != 't':
-			print(f"ERROR: File is opened in {self.mode} mode, Please  open the file using 'Open <filename> t' to truncate\n")
-			return
+			return f"ERROR: File is opened in {self.mode} mode, Please  open the file using 'Open <filename> t' to truncate\n"
 		#### APPLY CHECK FOR SIZE = 0 ####
 
 
@@ -193,6 +188,7 @@ class CustomFile:
 		#data[truncate_chunk_page] = data[truncate_chunk_page].replace(data[truncate_chunk_page][start_truncate : end] , SPECIAL_CHAR * int(char_to_truncate))
 		self.file_dict["data"][truncate_chunk]["length"] = str(int(self.file_dict["data"][truncate_chunk]["length"]) - int(char_to_truncate))
 
+		return f"{size} bytes Deleted From End of File {self.name}"
 
 	def write(self, text):
 
@@ -205,8 +201,7 @@ class CustomFile:
 		"""
 
 		if self.mode != 'w':
-			print(f"ERROR: File is opened in {self.mode} mode, Please  open the file using 'Open <filename> w' for writing")
-			return
+			return f"ERROR: File is opened in {self.mode} mode, Please  open the file using 'Open <filename> w' for writing"
 
 		#Deleting the content of file
 		size = 0
@@ -220,9 +215,9 @@ class CustomFile:
 		
 		#Setting the mode back to w
 		self.mode = 'w'
+
+		return "Text Written!"
 		
-
-
 	def writeAt(self, data, text, index):
 
 		""" 
@@ -236,8 +231,7 @@ class CustomFile:
 
 		# check if the file in opened in valid mode
 		if self.mode != 'w':
-			print(f"ERROR: File is opened in {self.mode} mode, Please  open the file using 'Open <filename> w' for writing")
-			return
+			return f"ERROR: File is opened in {self.mode} mode, Please  open the file using 'Open <filename> w' for writing"
 
 		self.mode = 'r'
 		file_text = self.read()
@@ -246,8 +240,7 @@ class CustomFile:
 
 		# if the index is greater than file size
 		if index > file_lentgh:
-			print(f"EEROR: Total file size is {file_lentgh}")
-			return
+			return f"EEROR: Total file size is {file_lentgh}"
 
 		#Deleting the data from the given index onwards
 		self.mode = 't'
@@ -260,13 +253,7 @@ class CustomFile:
 		#Reseting the mode back to w
 		self.mode = 'w'
 
-		''''page = self.file_dict["data"][chunk_to_write_at]["page"]
-		print(len(data[page]))
-		data[page] = data[page][:index] + text + data[page][index+len(text):]
-		print(len(data[page]))
-		print(data[page])'''
-
-
+		return f"Text Written at {index}th index of File {self.name}.txt"
 
 
 	def move(self, start, to, size):
@@ -282,13 +269,10 @@ class CustomFile:
 		"""
 
 		if size < 0:
-			print("Invalid Size: Size less than zero")
-			return
+			return "Invalid Size: Size less than zero"
 
 		if start < 0 or to < 0 :
-			print("INDEX ERROR: Index less than zero")
-			return
-
+			return "INDEX ERROR: Index less than zero"
 
 		self.mode = "m"
 
@@ -301,9 +285,8 @@ class CustomFile:
 
 		#checking for invalid indices
 		if size > size_of_file or start > size_of_file or to > size_of_file:
-			print(f"INVALID INDEX : Size of file is {size_of_file} bytes")
-			return 
-
+			return f"INVALID INDEX : Size of file is {size_of_file} bytes"
+			 
 
 		text_to_move = text[start : start + size]
 		text_to_replace = text[to : to + size]
@@ -320,6 +303,8 @@ class CustomFile:
 
 		self.mode = 'w'
 		self.write(text)
+
+		return f"Text in File {file_to_move_text_name} moved from {index_to_move_from}th index to {index_to_move_to}th index"
 
 
 
