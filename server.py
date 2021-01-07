@@ -23,3 +23,6 @@ while True:
 
 	threads.append(threading.Thread(target=thread_routine, args=(client,)))
 	threads[-1].start()
+
+
+server.close()

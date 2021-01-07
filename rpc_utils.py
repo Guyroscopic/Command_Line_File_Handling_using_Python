@@ -17,115 +17,130 @@ def thread_routine(client):
 
 	user = authenticate_user(user_id, user_password)
 	if type(user) == str:
-		client.send(user.encode())
+		response = "exit"
+		client.send(response.encode())
+		client.close()
 		return
 
-	client.send(f"\n  ***  User Authenticated\n  ***  Welcome {user.username}\n  ***  Starting Custom CLI. NOTE: Type 'help' for more info".encode())
-	while command_full:
+	else:
+		client.send(f"\n  ***  User Authenticated\n  ***  Welcome {user.username}\n  ***  Starting Custom CLI. NOTE: Type 'help' for more info".encode())
+		
+		while command_full:
 
-		#Promoting the user to enter a Command
-		if user.current_path == ROOT_PATH:
+			#Promoting the user to enter a Command
+			if user.current_path == ROOT_PATH:
 
-			client.send(f"\nroot {SPECIAL_CHAR} ".encode())
-			command_full = client.recv(1024).decode()
-		else:
-			client.send(f"\nroot/{user.current_path} {SPECIAL_CHAR} ".encode())
-			command_full = client.recv(1024).decode()
-
-		#Checking if any command is provided
-		try:
-			command_func = command_full.split()[0]
-
-		except IndexError as ie:
-			#print("\nERROR: No function entered")
-			client.send("\nERROR: No function entered".encode())
-			continue
-
-		#Checking is the command is valid
-		if command_func not in commands:
-			#print("\nERROR! No such command please try again")
-			client.send("\nERROR! No such command please try again".encode())
-
-		else:
-			client.send("\nValid Command".encode())
-			#If Command is critical
-			if(isCritical(command_full)):				
-
-				#Applying Lock
-				with simple_lock:
-
-					if command_func == "create":
-						#create(command_full)
-						pass
-
-					elif command_func == "mkdir":
-						#response = mkDir(command_full)
-						#client.send(response.encode())
-						#mkDir(command_full)
-						pass
-
-					elif command_func == "delete":
-						#delete(command_full)
-						pass
-
-					elif command_func == "append":
-						#append()
-						pass
-
-					elif command_func == "write":
-						#write()
-						pass
-
-					elif command_func == "writeat":
-						#writeAt(command_full)
-						pass
-
-					elif command_func == "truncate":
-						#truncate(command_full)
-						pass
-
-					elif command_func == "movetext":
-						#move_within_file(command_full)
-						pass			
-
-					elif command_func == "move":
-						#move(command_full)
-						pass
-
-			#If command is not critical
+				client.send(f"\nroot {SPECIAL_CHAR} ".encode())
+				command_full = client.recv(1024).decode()
 			else:
+				client.send(f"\nroot/{user.current_path} {SPECIAL_CHAR} ".encode())
+				command_full = client.recv(1024).decode()
 
-				if command_func == "read":
-					#read()
-					pass
+			#Checking if any command is provided
+			try:
+				command_func = command_full.split()[0]
 
-				elif command_func == "readfrom":
-					#readFrom(command_full)
-					pass
+			except IndexError as ie:
+				#print("\nERROR: No function entered")
+				client.send("\nERROR: No function entered".encode())
+				continue
 
-				elif command_func == "open":
-					#Open(command_full)
-					pass
+			#Checking is the command is valid
+			if command_func not in commands:
+				#print("\nERROR! No such command please try again")
+				client.send("\nERROR! No such command please try again".encode())
 
-				elif command_func == "close":
-					#close(command_full)
-					pass
+			else:
+				#If Command is critical
+				if(isCritical(command_full)):				
 
-				elif command_func == "showmap":
-					#showMap()
-					pass
+					#Applying Lock
+					with simple_lock:
 
-				elif command_func == "cd":
-					#chDir(command_full)
-					pass
+						if command_func == "create":
+							response = create(command_full, user)
+							client.send(response.encode())
 
-				elif command_func == "help":
-					#help()
-					pass
+						elif command_func == "mkdir":
+							response = mkDir(command_full, user)
+							client.send(response.encode())
 
-				elif command_func == "exit":
-					##ASK IF USER WANTS AN OUTPUT FILE
-					#print("\nQuitting")
-					break
+						elif command_func == "delete":
+							response = delete(command_full, user)
+							client.send(response.encode())
+
+						elif command_func == "append":
+							client.send("Enter Text to Append:".encode())
+							text = client.recv(1024).decode()
+
+							response = append(command_full, user, text)
+							client.send(response.encode())
+
+						elif command_func == "write":
+							client.send("Enter Text to Write:".encode())
+							text = client.recv(1024).decode()
+
+							response = write(command_full, user, text)
+							client.send(response.encode())
+
+						elif command_func == "writeat":
+							client.send("Enter Text to Write:".encode())
+							text = client.recv(1024).decode()
+
+							response = writeat(command_full, user, text)
+							client.send(response.encode())
+
+						elif command_func == "truncate":
+							response = truncate(command_full, user)
+							client.send(response.encode())
+
+						elif command_func == "movetext":
+							response = movetext(command_full, user)
+							client.send(response.encode())			
+
+						elif command_func == "move":
+							response = move(command_full, user)
+							client.send(response.encode())
+
+				#If command is not critical
+				else:
+
+					if command_func == "read":
+						response = read(command_full, user)
+						client.send(response.encode())
+
+					elif command_func == "readfrom":
+						response = readFrom(command_full, user)
+						client.send(response.encode())
+
+					elif command_func == "open":
+						response = Open(command_full, user)
+						client.send(response.encode())
+
+					elif command_func == "close":
+						response = close(command_full, user)
+						client.send(response.encode())
+
+					elif command_func == "showmap":
+						response = showMap(user)
+						client.send(response.encode())
+
+					elif command_func == "showfilemap":
+						response = showMemoryMap(command_full, user)
+						client.send(response.encode())
+
+					elif command_func == "cd":
+						response = chDir(command_full, user)
+						client.send(response.encode())
+
+					elif command_func == "help":
+						response = help()
+						client.send(response.encode())
+
+					elif command_func == "exit":
+						print(f"{user.username} is Quitting")
+						client.send("Quitting..".encode())
+						break
+
 	
-	client.close()
+		client.close()

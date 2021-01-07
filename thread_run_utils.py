@@ -8,18 +8,19 @@ with open("users.json", "r") as f:
 
 def authenticate_user(id, password):
 
-    try:
-        user = users_data[str(id)]
+    while True:
+        try:
+            user = users_data[str(id)]
 
-        if user["password"] == password:
-            return User(id, user["username"], password, [], "")
-        else:
-            #print(f"ERROR: Wrong Password for ID {id}")
-            return f"ERROR: Wrong Password for ID {id}"
+            if user["password"] == password:
+                return User(id, user["username"], password, [], "")
+            else:
+                #print(f"ERROR: Wrong Password for ID {id}")
+                return f"ERROR: Wrong Password for ID {id}"
 
-    except KeyError as ke:
-        #print(f"ERROR: No user with ID '{id}'")
-        return f"ERROR: No user with ID '{id}'"
+        except KeyError as ke:
+            #print(f"ERROR: No user with ID '{id}'")
+            return f"ERROR: No user with ID '{id}'"
 
 def isCritical(command_full):
 
@@ -33,7 +34,7 @@ def isCritical(command_full):
     command_func = command_full.split()[0]    
     
     #list of critical commands
-    critical_commands = ["showmap", "showmemorymap", "create", "delete", "mkdir", "move", "write", "truncate", "append", "writeat", "movetext", "read", "readfrom"]
+    critical_commands = ["create", "delete", "mkdir", "move", "write", "truncate", "append", "writeat", "movetext"]
 
     if command_func in critical_commands:
         return True
