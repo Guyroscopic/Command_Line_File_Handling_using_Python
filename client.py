@@ -8,8 +8,8 @@ port   = 95
 
 #prompting user to input ip of server
 ip = input("Enter IP address where you want to connect: ")
-
 addr = ip, port
+
 # connect to the server 
 server.connect(addr)
 
@@ -22,7 +22,6 @@ print (welcome_msg)
 #Prompting the user to get credentials and sending them to server
 user_id 	  = input("Enter Your User ID: ")
 user_password = getpass.getpass('Enter Your Password: ')
-print("Password: ", user_password, " Type: ", type(user_password))
 
 server.send(user_id.encode())
 server.send(user_password.encode())
