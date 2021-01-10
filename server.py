@@ -2,10 +2,11 @@ import socket
 from rpc_utils import *
 
 
-threads = []
 port    = 95
-ip      = "127.0.0.1" #socket.gethostname()
+host    = socket.gethostname()
+ip      = socket.gethostbyname(host)
 addr    = ip, port
+print("Hosting at: ", addr)
 server  = socket.socket()
 print("Socket successfully created")
 
@@ -21,8 +22,8 @@ while True:
 	#print("here")
 	print(f"Got connection from {client_addr}")
 
-	threads.append(threading.Thread(target=thread_routine, args=(client,)))
-	threads[-1].start()
+	threads[client_addr] = threading.Thread(target=thread_routine, args=(client, client_addr))
+	threads[client_addr].start()
 
 
 server.close()

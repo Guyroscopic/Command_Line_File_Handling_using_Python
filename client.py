@@ -1,12 +1,17 @@
-import socket             
-  
+import socket
+import getpass
+
+
 # Create a socket object  
 server = socket.socket()       
 port   = 95
 
-# connect to the server 
-server.connect(('127.0.0.1', port))  
+#prompting user to input ip of server
+ip = input("Enter IP address where you want to connect: ")
 
+addr = ip, port
+# connect to the server 
+server.connect(addr)
 
 # the commands which require additional text input from client
 input_commands = ["write", "append", "writeat"]
@@ -16,16 +21,17 @@ print (welcome_msg)
 
 #Prompting the user to get credentials and sending them to server
 user_id 	  = input("Enter Your User ID: ")
-user_password = input("Enter Your Password: ")
-
+user_password = getpass.getpass('Enter Your Password: ')
+print("Password: ", user_password, " Type: ", type(user_password))
+#exit()
 server.send(user_id.encode())
 server.send(user_password.encode())
 
 # server returns user instance upon successful authentication and proceeds
 # else returns an error string and terminates the connection
 response = server.recv(1024).decode()
-if(response == "exit"):
-	print("Invalid Credentials!\n Exiting..")
+if(response == "invalid_creds"):
+	print("Invalid Credentials!\nExiting...")
 	server.close()
 
 else:
@@ -45,16 +51,14 @@ else:
 			server.send(text_input.encode())
 
 		server_response = server.recv(1024).decode()
-		print(server_response)
+		
 
 		if server_response == "exit":
 			print("Quitting...")
-			break
-	#user_password = input("Enter Your Password: ")
+			command_full_input_prompt = ""
+			#break
+		else:
+			print(server_response)	
 
-	
-
-# receive data from the server  
- 
-# close the connection  
+#Closing the connection  
 server.close()  
