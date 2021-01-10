@@ -13,8 +13,8 @@ addr = ip, port
 # connect to the server 
 server.connect(addr)
 
-# the commands which require additional text input from client
-input_commands = ["write", "append", "writeat"]
+#The commands which require additional text input from client
+additional_input_commands = ["write", "append", "writeat"]
 
 welcome_msg = server.recv(1024).decode()
 print (welcome_msg)
@@ -23,12 +23,11 @@ print (welcome_msg)
 user_id 	  = input("Enter Your User ID: ")
 user_password = getpass.getpass('Enter Your Password: ')
 print("Password: ", user_password, " Type: ", type(user_password))
-#exit()
+
 server.send(user_id.encode())
 server.send(user_password.encode())
 
-# server returns user instance upon successful authentication and proceeds
-# else returns an error string and terminates the connection
+#Closing the connection in case of invalid credentials
 response = server.recv(1024).decode()
 if(response == "invalid_creds"):
 	print("Invalid Credentials!\nExiting...")
@@ -45,13 +44,12 @@ else:
 
 		server.send(command_full.encode())
 
-		if command_full.split()[0] in input_commands:
+		if command_full.split()[0] in additional_input_commands:
 			input_response = server.recv(1024).decode()
 			text_input = input(input_response)
 			server.send(text_input.encode())
 
-		server_response = server.recv(1024).decode()
-		
+		server_response = server.recv(1024).decode()		
 
 		if server_response == "exit":
 			print("Quitting...")
