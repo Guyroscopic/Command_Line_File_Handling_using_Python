@@ -10,8 +10,12 @@ port   = 95
 ip = input("Enter IP address where you want to connect: ")
 addr = ip, port
 
-# connect to the server 
-server.connect(addr)
+# connect to the server
+try:
+	server.connect(addr)
+except ConnectionRefusedError:
+	print("\n  ***  ERROR! Server Refused to Connect")
+	exit()
 
 #The commands which require additional text input from client
 additional_input_commands = ["write", "append", "writeat"]

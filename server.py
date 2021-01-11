@@ -5,8 +5,9 @@ from rpc_utils import *
 port    = 95
 host    = socket.gethostname()
 ip      = socket.gethostbyname(host)
+
 addr    = ip, port
-print("Hosting at: ", addr)
+print(f"Hosting at '{ip}:{port}'")
 server  = socket.socket()
 print("Socket successfully created")
 
