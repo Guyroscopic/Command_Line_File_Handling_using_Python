@@ -6,8 +6,9 @@ current_path = ROOT_PATH
 current_file = None
 PAGE_SIZE    = 1024
 
-commands = ["create", "delete", "mkdir", "move", "movetext", "cd", "open", "close", "showmap", "showfilemap", "read", "readfrom", "append", "write", "writeat", "truncate", "exit", "help"]
+commands     = ["create", "delete", "mkdir", "move", "movetext", "cd", "open", "close", "showmap", "showfilemap", "read", "readfrom", "append", "write", "writeat", "truncate", "exit", "help"]
 
+opened_files = {}
 
 ######################      Function that operate on/modify File structure    ################
 
@@ -420,9 +421,30 @@ def Open(command_full, user):
                 return server_response
 
             else:
+                
+                #Checking if user has already opened five files
+                if(len(user.getCurrentFileNames()) == 5):
+                    server_response = "ERROR! You already have 5 files opened, Please close a file before opening more"
+                    return server_response
+
+                #Checking if the requested file is already opened by 3 users
+                try:
+                    temp = opened_files[file_name]
+                    if(len(list(opened_files[file_name].keys())) < 3):
+                        opened_files[file_name][user.id] = file_mode
+                    else:
+                        server_response = f"ERROR! File '{file_name}' is already opened by 3 users, Please wait"
+                        return server_response
+                except KeyError as ke:
+                    opened_files[file_name] = {user.id : file_mode}
+
+                print("Global Array: ",opened_files)
+
+                #Adding file to user's opened files
                 file = CustomFile(file_name, file_extension, hierarchy, file_mode)
                 user.current_files.append(file)
-                #print(f"'{file_path}{file_extension}' succesfully Opened in '{file_mode}' mode for {user}")   
+                #print(f"'{file_path}{file_extension}' succesfully Opened in '{file_mode}' mode for {user}")
+                print(f"Files Opened by {user.username}: ", user.getCurrentFileNames())
                 server_response = f"'{file_path}{file_extension}' succesfully Opened in '{file_mode}' mode for {user}"
                 return server_response
 
@@ -458,7 +480,15 @@ def close(command_full, user):
         for file in user.current_files:
             if file.name == file_to_close_name:
                 #print(f"{file_to_close_name} succesfully Closed for {user}")
+
+                #Removing the file from the global opened files array
+                opened_files[file_to_close_name].pop(user.id)
+                print("Global Array: ", opened_files)
+
+                #Removing the file from user's opened files
                 user.current_files.remove(file)
+                print(f"Files Opened by {user.username}: ", user.getCurrentFileNames())
+
                 server_response = f"{file_to_close_name} succesfully Closed for {user}"
                 return server_response
                 #print("CLOSE:", user.getCurrentFileNames())
@@ -625,13 +655,13 @@ def truncate(command_full, user):
         server_response = "\nERROR: Invalid use of aruncate command, usage: 'truncate <filename> <size>'"
         return server_response
 
-def write(command_full, user):
+def write(command_full, user, text):
 
     server_response = ""
     try:
 
         file_to_write = command_full.split()[1]
-        text = command_full.split()[2:] # PROMPT USER FOR TEXT TO WRITE
+        #text = command_full.split()[2:] # PROMPT USER FOR TEXT TO WRITE
 
         if len(user.current_files) == 0:
             #print(f"ERROR: No file is opened, Please open a file using 'open <filename> <mode>' before using 'write' command")
@@ -660,7 +690,7 @@ def write(command_full, user):
         server_response += "\nERROR: Invalid use of write command, usage: 'write <filename> <text>'"
         return server_response
 
-def writeAt(command_full, user):
+def writeAt(command_full, user, text):
 
     server_response = ""
     try:

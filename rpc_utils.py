@@ -46,6 +46,7 @@ def thread_routine(client, client_addr):
 		#Checking if any command is provided
 		try:
 			command_func = command_full.split()[0]
+			#print("COMMAND FUNC: ",  command_func)
 
 		except IndexError as ie:
 			#print("\nERROR: No function entered")

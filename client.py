@@ -42,6 +42,7 @@ else:
 	command_full_input_prompt = "not empty"
 	while command_full_input_prompt:	
 
+		#print("start of client while loop")
 		command_full_input_prompt = server.recv(1024).decode()	
 		command_full    		  = input(command_full_input_prompt)
 
@@ -52,14 +53,15 @@ else:
 			text_input = input(input_response)
 			server.send(text_input.encode())
 
-		server_response = server.recv(1024).decode()		
+		server_response = server.recv(1024).decode()
+		#print("After recieving server response")		
 
 		if server_response == "exit":
 			print("Quitting...")
 			command_full_input_prompt = ""
 			#break
 		else:
-			print(server_response)	
+			print(server_response)
 
 #Closing the connection  
 server.close()  
